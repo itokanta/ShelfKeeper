@@ -1,5 +1,7 @@
 package com.example.shelfkeeper.usecase.adminuser.findsingle;
 
+import org.springframework.stereotype.Service;
+
 import com.example.shelfkeeper.domain.adminuser.AdminUser;
 import com.example.shelfkeeper.usecase.port.AdminUserRepository;
 
@@ -9,6 +11,7 @@ import com.example.shelfkeeper.usecase.port.AdminUserRepository;
  *
  * @author itokanta
  */
+@Service
 public class AdminUserFindSingleInteractor implements AdminUserFindSingleUseCase{
   /** 管理者ユーザーの永続化を担うリポジトリ。 */
   private final AdminUserRepository adminUserRepository;

@@ -22,10 +22,10 @@ public class AdminUserDeleteInteractor implements AdminUserDeleteUseCase{
   /**
    * 管理者ユーザーを削除する。
    *
-   * @param adminUserDeleteInputDate 削除する管理者ユーザーの入力データ
+   * @param adminUserDeleteInputData 削除する管理者ユーザーの入力データ
    */
   @Override
-  public void handle(AdminUserDeleteInputDate adminUserDeleteInputDate) {
-    adminUserRepository.adminUserDelete(adminUserDeleteInputDate.getId());
+  public void handle(AdminUserDeleteInputData adminUserDeleteInputData) {
+    adminUserRepository.adminUserDelete(adminUserDeleteInputData.getId());
   }
 }

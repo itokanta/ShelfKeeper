@@ -29,7 +29,7 @@ public class AdminUserDeleteInteractorTest {
    */
   @Test
   void handleSuccess() {
-    AdminUserDeleteInputDate deleteTarget = new AdminUserDeleteInputDate(1);
+    AdminUserDeleteInputData deleteTarget = new AdminUserDeleteInputData(1);
 
     adminUserDeleteInteractor.handle(deleteTarget);
 

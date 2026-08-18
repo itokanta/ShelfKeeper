@@ -5,11 +5,11 @@ package com.example.shelfkeeper.usecase.adminuser.delete;
  *
  * @author itokanta
  */
-public class AdminUserDeleteInputDate {
+public class AdminUserDeleteInputData {
   /** 削除対象の管理者ユーザーの識別子。 */
   private final Integer id;
 
-  public AdminUserDeleteInputDate(Integer id) {
+  public AdminUserDeleteInputData(Integer id) {
     this.id = id;
   }
 
