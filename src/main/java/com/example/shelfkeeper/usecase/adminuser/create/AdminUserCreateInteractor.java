@@ -38,7 +38,7 @@ public class AdminUserCreateInteractor implements AdminUserCreateUseCase{
     Optional<AdminUser> adminUser = adminUserRepository.findByMail(adminUserCreateInputData.getMail());
 
     if (!adminUser.isEmpty()){
-      throw new RuntimeException();
+      throw new RuntimeException("入力されたメールアドレスはすでに登録されています");
     }
 
     String hashPass = passwordEncoder.encode(adminUserCreateInputData.getPass());
