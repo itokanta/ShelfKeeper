@@ -5,7 +5,7 @@ package com.example.shelfkeeper.usecase.user.delete;
  *
  * @author itokanta
  */
-public interface UseDeleteUseCase {
+public interface UserDeleteUseCase {
   /**
    * 利用者を削除する。
    *

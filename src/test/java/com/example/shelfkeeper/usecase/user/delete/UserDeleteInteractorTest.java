@@ -18,18 +18,18 @@ import com.example.shelfkeeper.domain.user.User;
 import com.example.shelfkeeper.usecase.port.UserRepository;
 
 /**
- * {@link UseDeleteInteractor} のテストクラス。
+ * {@link UserDeleteInteractor} のテストクラス。
  *
  * @author itokanta
  */
 @ExtendWith(MockitoExtension.class)
-public class UseDeleteInteractorTest {
+public class UserDeleteInteractorTest {
 
   @Mock
   private UserRepository userRepository;
 
   @InjectMocks
-  private UseDeleteInteractor useDeleteInteractor;
+  private UserDeleteInteractor useDeleteInteractor;
 
   /**
    * 存在する利用者を削除できることを検証する。

@@ -6,16 +6,16 @@ import com.example.shelfkeeper.domain.user.User;
 import com.example.shelfkeeper.usecase.port.UserRepository;
 
 /**
- * {@link UseDeleteUseCase} の実装クラス。
+ * {@link UserDeleteUseCase} の実装クラス。
  * 指定された識別子の利用者が存在することを確認したうえで削除する。
  *
  * @author itokanta
  */
-public class UseDeleteInteractor implements UseDeleteUseCase{
+public class UserDeleteInteractor implements UserDeleteUseCase{
   /** 利用者の永続化を担うリポジトリ。 */
   private final UserRepository userRepository;
 
-  public UseDeleteInteractor(UserRepository userRepository) {
+  public UserDeleteInteractor(UserRepository userRepository) {
     this.userRepository = userRepository;
   }
 
