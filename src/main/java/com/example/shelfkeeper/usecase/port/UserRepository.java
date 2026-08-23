@@ -1,6 +1,7 @@
 package com.example.shelfkeeper.usecase.port;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.example.shelfkeeper.domain.user.User;
 
@@ -10,6 +11,14 @@ import com.example.shelfkeeper.domain.user.User;
  * @author itokanta
  */
 public interface UserRepository {
+  /**
+   * 識別子で利用者を取得する。
+   *
+   * @param id 利用者の識別子
+   * @return 該当する利用者。存在しない場合は空
+   */
+  Optional<User> findById(Integer id);
+
   /**
    * 利用者を全件取得する。
    *
