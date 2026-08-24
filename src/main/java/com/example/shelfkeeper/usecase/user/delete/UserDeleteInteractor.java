@@ -2,6 +2,8 @@ package com.example.shelfkeeper.usecase.user.delete;
 
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
 import com.example.shelfkeeper.domain.user.User;
 import com.example.shelfkeeper.usecase.port.UserRepository;
 
@@ -11,6 +13,7 @@ import com.example.shelfkeeper.usecase.port.UserRepository;
  *
  * @author itokanta
  */
+@Service
 public class UserDeleteInteractor implements UserDeleteUseCase{
   /** 利用者の永続化を担うリポジトリ。 */
   private final UserRepository userRepository;

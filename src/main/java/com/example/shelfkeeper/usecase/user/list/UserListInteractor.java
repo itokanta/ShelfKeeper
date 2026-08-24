@@ -3,6 +3,8 @@ package com.example.shelfkeeper.usecase.user.list;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.example.shelfkeeper.domain.user.User;
 import com.example.shelfkeeper.usecase.port.UserRepository;
 
@@ -12,6 +14,7 @@ import com.example.shelfkeeper.usecase.port.UserRepository;
  *
  * @author itokanta
  */
+@Service
 public class UserListInteractor implements UserListUseCase{
   /** 利用者の永続化を担うリポジトリ。 */
   private final UserRepository userRepository;
