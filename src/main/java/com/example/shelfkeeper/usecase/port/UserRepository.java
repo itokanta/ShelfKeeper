@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.shelfkeeper.domain.user.User;
+import com.example.shelfkeeper.infrastructure.entity.user.UserOverDue;
 
 /**
  * 利用者の永続化を担うリポジトリ。
@@ -18,6 +19,13 @@ public interface UserRepository {
    * @return 該当する利用者。存在しない場合は空
    */
   Optional<User> findById(Integer id);
+
+  /**
+   * 延滞中の利用者とその延滞書籍一覧を取得する。
+   *
+   * @return 延滞利用者の一覧
+   */
+  List<UserOverDue> findOverDueUser();
 
   /**
    * 利用者を全件取得する。
