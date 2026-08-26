@@ -20,6 +20,8 @@ public class LoanRecord {
   private final LocalDate dueDate;
   /** 返却日。未返却の場合は {@code null}。 */
   private final LocalDate returnDate;
+  /** 貸出期間（日数）。 */
+  private static final int LOAN_PERIOD_DAYS = 7;
   
   public LoanRecord(Integer id, Integer userId, Integer bookId, LocalDate loanDate, LocalDate dueDate,LocalDate returnDate) {
     this.id = id;
@@ -53,4 +55,16 @@ public class LoanRecord {
 	public LocalDate getReturnDate() {
 		return returnDate;
 	}
+
+    /**
+     * 新規貸出記録を作成する。
+     * 貸出日は本日、返却期限日は本日＋貸出期間、返却日は未設定とする。
+     *
+     * @param userId 貸出利用者の識別子
+     * @param bookId 貸出書籍の識別子
+     * @return 作成した貸出記録
+     */
+    public static LoanRecord checkOut(Integer userId, Integer bookId) {
+      return new LoanRecord(null, userId, bookId, LocalDate.now(), LocalDate.now().plusDays(LOAN_PERIOD_DAYS), null);
+    }
 }

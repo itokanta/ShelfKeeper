@@ -21,6 +21,14 @@ public interface LoanRecordRepository {
   Optional<LoanRecord> findById(Integer id);
 
   /**
+   * 書籍の識別子で未返却の貸出記録を取得する。
+   *
+   * @param bookId 書籍の識別子
+   * @return 未返却の貸出記録。存在しない場合は空
+   */
+  Optional<LoanRecord> returnDateIsNullFindByBookId(Integer bookId);
+
+  /**
    * 貸出を登録する。
    *
    * @param loanRecord 登録する貸出記録
