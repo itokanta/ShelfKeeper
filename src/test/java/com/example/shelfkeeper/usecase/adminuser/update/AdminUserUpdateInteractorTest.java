@@ -37,7 +37,7 @@ public class AdminUserUpdateInteractorTest {
    */
   @Test
   void handleSuccessAllUpdate() {
-    AdminUser dbData = new AdminUser(1, "test", "test@test", "hashed-pass", null, null);
+    AdminUser dbData = new AdminUser(1, "test", "test@test", "hashed-pass");
     AdminUserUpdateInputData inputData = new AdminUserUpdateInputData(1, "test2", "test2@test2", "test2test2");
 
     when(adminUserRepository.findById(inputData.getId())).thenReturn(dbData);
@@ -60,7 +60,7 @@ public class AdminUserUpdateInteractorTest {
    */
   @Test
   void handleSuccessNoUpdate() {
-    AdminUser dbData = new AdminUser(1, "test", "test@test", "hashed-pass", null, null);
+    AdminUser dbData = new AdminUser(1, "test", "test@test", "hashed-pass");
     AdminUserUpdateInputData inputData = new AdminUserUpdateInputData(1, null, null, null);
 
     when(adminUserRepository.findById(inputData.getId())).thenReturn(dbData);

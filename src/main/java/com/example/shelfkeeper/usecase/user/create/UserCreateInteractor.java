@@ -27,7 +27,7 @@ public class UserCreateInteractor implements UserCreateUseCase{
    */
   @Override
   public void handle(UserCreateInputData userCreateInputData) {
-    User user = new User(null, userCreateInputData.getName(), null, null);
+    User user = new User(null, userCreateInputData.getName());
     userRepository.userCreate(user);
   }
 }

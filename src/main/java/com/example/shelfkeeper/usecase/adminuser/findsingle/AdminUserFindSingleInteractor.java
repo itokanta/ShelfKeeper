@@ -33,7 +33,7 @@ public class AdminUserFindSingleInteractor implements AdminUserFindSingleUseCase
   public void handle(AdminUserFindSingleInputData adminUserFindSingleInputData) {
     AdminUser adminUser = adminUserRepository.findById(adminUserFindSingleInputData.getId());
 
-    AdminUserFindSingleOutputData outputData = new AdminUserFindSingleOutputData(adminUser.getName(), adminUser.getMail(), adminUser.getCreatedAt(), adminUser.getUpdatedAt());
+    AdminUserFindSingleOutputData outputData = new AdminUserFindSingleOutputData(adminUser.getName(), adminUser.getMail());
 
     adminUserFindSingleOutputBoundary.complete(outputData);
   }

@@ -20,21 +20,14 @@ public class LoanRecord {
   private final LocalDate dueDate;
   /** 返却日。未返却の場合は {@code null}。 */
   private final LocalDate returnDate;
-  /** 作成日。 */
-  private final LocalDate createdAt;
-  /** 更新日。 */
-  private final LocalDate updatedAt;
   
-  public LoanRecord(Integer id, Integer userId, Integer bookId, LocalDate loanDate, LocalDate dueDate,
-      LocalDate returnDate, LocalDate createdAt, LocalDate updatedAt) {
+  public LoanRecord(Integer id, Integer userId, Integer bookId, LocalDate loanDate, LocalDate dueDate,LocalDate returnDate) {
     this.id = id;
     this.userId = userId;
     this.bookId = bookId;
     this.loanDate = loanDate;
     this.dueDate = dueDate;
     this.returnDate = returnDate;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
   }
 
 	public Integer getId() {
@@ -59,13 +52,5 @@ public class LoanRecord {
 
 	public LocalDate getReturnDate() {
 		return returnDate;
-	}
-
-	public LocalDate getCreatedAt() {
-		return createdAt;
-	}
-
-	public LocalDate getUpdatedAt() {
-		return updatedAt;
 	}
 }

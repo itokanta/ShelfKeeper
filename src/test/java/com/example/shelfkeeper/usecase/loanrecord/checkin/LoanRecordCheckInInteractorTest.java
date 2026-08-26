@@ -40,7 +40,7 @@ public class LoanRecordCheckInInteractorTest {
   @Test
   void handleSuccess() {
     LoanRecordCheckInInputData inInputData = new LoanRecordCheckInInputData(1);
-    LoanRecord findByIdResult = new LoanRecord(1, 2, 3, LocalDate.of(2026, 8, 20), LocalDate.of(2026, 8, 26), null, null, null);
+    LoanRecord findByIdResult = new LoanRecord(1, 2, 3, LocalDate.of(2026, 8, 20), LocalDate.of(2026, 8, 26), null);
 
     when(loanRecordRepository.findById(inInputData.getId())).thenReturn(Optional.of(findByIdResult));
 
@@ -79,7 +79,7 @@ public class LoanRecordCheckInInteractorTest {
   @Test
   void handleReturnedError() {
     LoanRecordCheckInInputData inInputData = new LoanRecordCheckInInputData(1);
-    LoanRecord findByIdResult = new LoanRecord(1, 2, 3, LocalDate.of(2026, 8, 20), LocalDate.of(2026, 8, 26), LocalDate.of(2026, 8, 25), null, null);
+    LoanRecord findByIdResult = new LoanRecord(1, 2, 3, LocalDate.of(2026, 8, 20), LocalDate.of(2026, 8, 26), LocalDate.of(2026, 8, 25));
 
     when(loanRecordRepository.findById(inInputData.getId())).thenReturn(Optional.of(findByIdResult));
 

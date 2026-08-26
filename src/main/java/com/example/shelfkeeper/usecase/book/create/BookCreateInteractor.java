@@ -27,6 +27,6 @@ public class BookCreateInteractor implements BookCreateUseCase{
    */
   @Override
   public void handle(BookCreateInputData bookCreateInputData) {
-    bookRepository.bookCreate(new Book(null, bookCreateInputData.getTitle(), bookCreateInputData.getAuthorName(), null, null));
+    bookRepository.bookCreate(new Book(null, bookCreateInputData.getTitle(), bookCreateInputData.getAuthorName()));
   }
 }

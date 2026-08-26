@@ -38,7 +38,7 @@ public class UserDeleteInteractorTest {
   void handleSuccess() {
     UserDeleteInputData deleteTarget = new UserDeleteInputData(1);
 
-    when(userRepository.findById(deleteTarget.getId())).thenReturn(Optional.of(new User(1, "test", null, null)));
+    when(userRepository.findById(deleteTarget.getId())).thenReturn(Optional.of(new User(1, "test")));
 
     useDeleteInteractor.handle(deleteTarget);
 

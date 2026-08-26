@@ -1,7 +1,5 @@
 package com.example.shelfkeeper.domain.book;
 
-import java.time.LocalDate;
-
 /**
  * 蔵書を表すドメインクラス。
  *
@@ -14,17 +12,11 @@ public class Book {
   private final String title;
   /** 著者名。 */
   private final String authorName;
-  /** 作成日。 */
-  private final LocalDate createdAt;
-  /** 更新日。 */
-  private final LocalDate updatedAt;
 
-	public Book(Integer id, String title, String authorName, LocalDate createdAt, LocalDate updatedAt) {
+	public Book(Integer id, String title, String authorName) {
 		this.id = id;
 		this.title = title;
 		this.authorName = authorName;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
 	}
 
 	public Integer getId() {
@@ -38,12 +30,4 @@ public class Book {
 	public String getAuthorName() {
 		return authorName;
 	}
-
-  public LocalDate getCreatedAt() {
-    return createdAt;
-  }
-
-  public LocalDate getUpdatedAt() {
-    return updatedAt;
-  }
 }

@@ -1,7 +1,5 @@
 package com.example.shelfkeeper.domain.adminuser;
 
-import java.time.LocalDate;
-
 /**
  * 管理者ユーザーを表すドメインクラス。
  *
@@ -16,18 +14,12 @@ public class AdminUser {
   private final String mail;
   /** パスワード。 */
   private final String pass;
-  /** 作成日。 */
-  private final LocalDate createdAt;
-  /** 更新日。 */
-  private final LocalDate updatedAt;
 
-  public AdminUser(Integer id, String name, String mail, String pass, LocalDate createdAt, LocalDate updatedAt) {
+  public AdminUser(Integer id, String name, String mail, String pass) {
     this.id = id;
     this.name = name;
     this.mail = mail;
     this.pass = pass;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
   }
 
   public Integer getId() {
@@ -44,13 +36,5 @@ public class AdminUser {
 
   public String getPass() {
     return pass;
-  }
-
-  public LocalDate getCreatedAt() {
-    return createdAt;
-  }
-
-  public LocalDate getUpdatedAt() {
-    return updatedAt;
   }
 }

@@ -51,7 +51,7 @@ public class AdminUserUpdateInteractor implements AdminUserUpdateUseCase{
       pass = passwordEncoder.encode(adminUserUpdateInputData.getPass());
     }
 
-    AdminUser newUser = new AdminUser(adminUserUpdateInputData.getId(), name, mail, pass, null, null);
+    AdminUser newUser = new AdminUser(adminUserUpdateInputData.getId(), name, mail, pass);
     adminUserRepository.adminUserUpdate(newUser);
   }
 }

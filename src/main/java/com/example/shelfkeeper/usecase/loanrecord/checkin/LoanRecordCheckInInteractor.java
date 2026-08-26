@@ -44,6 +44,6 @@ public class LoanRecordCheckInInteractor implements LoanRecordCheckInUseCase{
       throw new RuntimeException("指定された書籍はすでに返却済みです");
     }
 
-    loanRecordRepository.checkIn(new LoanRecord(checkInTarget.getId(), checkInTarget.getUserId(), checkInTarget.getBookId(), checkInTarget.getLoanDate(), checkInTarget.getDueDate(), LocalDate.now(), null, null));
+    loanRecordRepository.checkIn(new LoanRecord(checkInTarget.getId(), checkInTarget.getUserId(), checkInTarget.getBookId(), checkInTarget.getLoanDate(), checkInTarget.getDueDate(), LocalDate.now()));
   }
 }

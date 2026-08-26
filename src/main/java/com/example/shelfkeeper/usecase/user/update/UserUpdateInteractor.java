@@ -41,7 +41,7 @@ public class UserUpdateInteractor implements UserUpdateUseCase{
       name = updateInputData.getName();
     }
 
-    User newUser = new User(dbData.get().getId(), name, null, null);
+    User newUser = new User(dbData.get().getId(), name);
     userRepository.userUpdate(newUser);
   }
 }

@@ -42,7 +42,7 @@ public class AdminUserCreateInteractor implements AdminUserCreateUseCase{
     }
 
     String hashPass = passwordEncoder.encode(adminUserCreateInputData.getPass());
-    AdminUser newAdminUser = new AdminUser(null, adminUserCreateInputData.getName(), adminUserCreateInputData.getMail(), hashPass, null, null);
+    AdminUser newAdminUser = new AdminUser(null, adminUserCreateInputData.getName(), adminUserCreateInputData.getMail(), hashPass);
 
     adminUserRepository.adminUserCreate(newAdminUser);
   }

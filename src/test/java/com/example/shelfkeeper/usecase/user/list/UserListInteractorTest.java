@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,8 +40,8 @@ public class UserListInteractorTest {
   @Test
   void handleSuccess() {
     List<User> findAllResult = new ArrayList<>();
-    findAllResult.add(new User(1, "test", LocalDate.of(2026, 8, 20), LocalDate.of(2026, 8, 21)));
-    findAllResult.add(new User(2, "test2", LocalDate.of(2026, 8, 15), LocalDate.of(2026, 8, 22)));
+    findAllResult.add(new User(1, "test"));
+    findAllResult.add(new User(2, "test2"));
 
     when(userRepository.findAll()).thenReturn(findAllResult);
 

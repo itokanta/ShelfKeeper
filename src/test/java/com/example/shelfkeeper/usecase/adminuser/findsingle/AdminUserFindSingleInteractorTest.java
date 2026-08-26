@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDate;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -39,7 +37,7 @@ public class AdminUserFindSingleInteractorTest {
   @Test
   void handleSuccess() {
     AdminUserFindSingleInputData targetUser = new AdminUserFindSingleInputData(1);
-    AdminUser findByIdResult = new AdminUser(1, "test", "test@test", "hashed^pass", LocalDate.of(2026, 8, 18), LocalDate.of(2026, 8, 19));
+    AdminUser findByIdResult = new AdminUser(1, "test", "test@test", "hashed^pass");
 
     when(adminUserRepository.findById(targetUser.getId())).thenReturn(findByIdResult);
 
@@ -52,7 +50,5 @@ public class AdminUserFindSingleInteractorTest {
     AdminUserFindSingleOutputData outputData = captor.getValue();
     assertEquals(findByIdResult.getName(), outputData.getName());
     assertEquals(findByIdResult.getMail(), outputData.getMail());
-    assertEquals(findByIdResult.getCreatedAt(), outputData.getCreatedAt());
-    assertEquals(findByIdResult.getUpdatedAt(), outputData.getUpdatedAt());
   }
 }

@@ -38,7 +38,7 @@ public class BookDeleteInteractorTest {
   void handleSuccess() {
     BookDeleteInputData deleteTarget = new BookDeleteInputData(1);
 
-    when(bookRepository.findById(deleteTarget.getId())).thenReturn(Optional.of(new Book(1, "test", "testName", null, null)));
+    when(bookRepository.findById(deleteTarget.getId())).thenReturn(Optional.of(new Book(1, "test", "testName")));
     
     bookDeleteInteractor.handle(deleteTarget);
 

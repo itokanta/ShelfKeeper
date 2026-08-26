@@ -39,7 +39,7 @@ public class UserUpdateInteractorTest {
   @Test
   void handleSuccessAllUpdate() {
     UserUpdateInputData inputData = new UserUpdateInputData(1, "test2");
-    User dbData = new User(1, "test", null, null);
+    User dbData = new User(1, "test");
 
     when(userRepository.findById(inputData.getId())).thenReturn(Optional.of(dbData));
 
@@ -59,7 +59,7 @@ public class UserUpdateInteractorTest {
   @Test
   void handleSuccessNoUpdate() {
     UserUpdateInputData inputData = new UserUpdateInputData(1, null);
-    User dbData = new User(1, "test", null, null);
+    User dbData = new User(1, "test");
 
     when(userRepository.findById(inputData.getId())).thenReturn(Optional.of(dbData));
 
