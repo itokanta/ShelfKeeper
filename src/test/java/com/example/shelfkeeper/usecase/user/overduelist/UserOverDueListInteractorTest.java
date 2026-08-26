@@ -15,8 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.shelfkeeper.infrastructure.entity.book.UserOverDueBook;
 import com.example.shelfkeeper.infrastructure.entity.user.UserOverDue;
-import com.example.shelfkeeper.infrastructure.entity.user.UserOverDueBook;
 import com.example.shelfkeeper.usecase.port.UserRepository;
 
 /**
@@ -44,13 +44,13 @@ public class UserOverDueListInteractorTest {
     List<UserOverDue> findOverDueUserResult = new ArrayList<>();
 
     List<UserOverDueBook> overDueBookList1 = new ArrayList<>(List.of(
-      new UserOverDueBook("testTitle1", LocalDate.of(2026, 8, 21), LocalDate.of(2026, 8, 25)), 
-      new UserOverDueBook("testTitle2", LocalDate.of(2026, 9, 21), LocalDate.of(2026, 9, 25))
+      new UserOverDueBook(1, "testTitle1", LocalDate.of(2026, 8, 21), LocalDate.of(2026, 8, 25)), 
+      new UserOverDueBook(2, "testTitle2", LocalDate.of(2026, 9, 21), LocalDate.of(2026, 9, 25))
     ));
 
     List<UserOverDueBook> overDueBookList2 = new ArrayList<>(List.of(
-      new UserOverDueBook("testTitle3", LocalDate.of(2026, 10, 21), LocalDate.of(2026, 10, 25)),
-      new UserOverDueBook("testTitle4", LocalDate.of(2026, 11, 21), LocalDate.of(2026, 11, 25))
+      new UserOverDueBook(3, "testTitle3", LocalDate.of(2026, 10, 21), LocalDate.of(2026, 10, 25)),
+      new UserOverDueBook(4, "testTitle4", LocalDate.of(2026, 11, 21), LocalDate.of(2026, 11, 25))
     ));
 
     findOverDueUserResult.add(new UserOverDue(1, "test1", overDueBookList1));
@@ -77,12 +77,14 @@ public class UserOverDueListInteractorTest {
     assertEquals(2, bookList1.size());
     assertEquals(2, bookList2.size());
     for(int i = 0; i < bookList1.size(); i++) {
+      assertEquals(overDueBookList1.get(i).getBookId(), bookList1.get(i).getBookId());
       assertEquals(overDueBookList1.get(i).getBookTitle(), bookList1.get(i).getBookTitle());
       assertEquals(overDueBookList1.get(i).getDueDate(), bookList1.get(i).getDueDate());
       assertEquals(overDueBookList1.get(i).getLoanDate(), bookList1.get(i).getLoanDate());
     }
 
     for (int i = 0; i < bookList2.size(); i++) {
+      assertEquals(overDueBookList2.get(i).getBookId(), bookList2.get(i).getBookId());
       assertEquals(overDueBookList2.get(i).getBookTitle(), bookList2.get(i).getBookTitle());
       assertEquals(overDueBookList2.get(i).getDueDate(), bookList2.get(i).getDueDate());
       assertEquals(overDueBookList2.get(i).getLoanDate(), bookList2.get(i).getLoanDate());

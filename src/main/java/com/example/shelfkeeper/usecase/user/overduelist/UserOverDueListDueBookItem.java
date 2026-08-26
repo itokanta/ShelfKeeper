@@ -8,6 +8,8 @@ import java.time.LocalDate;
  * @author itokanta
  */
 public class UserOverDueListDueBookItem {
+  /** 書籍の識別子。 */
+  private final Integer bookId;
   /** 書籍のタイトル。 */
   private final String bookTitle;
   /** 貸出日。 */
@@ -15,10 +17,15 @@ public class UserOverDueListDueBookItem {
   /** 返却期限日。 */
   private final LocalDate dueDate;
 
-  public UserOverDueListDueBookItem(String bookTitle, LocalDate loanDate, LocalDate dueDate) {
+  public UserOverDueListDueBookItem(Integer bookId, String bookTitle, LocalDate loanDate, LocalDate dueDate) {
+    this.bookId = bookId;
     this.bookTitle = bookTitle;
     this.loanDate = loanDate;
     this.dueDate = dueDate;
+  }
+
+  public Integer getBookId() {
+    return bookId;
   }
 
   public String getBookTitle() {

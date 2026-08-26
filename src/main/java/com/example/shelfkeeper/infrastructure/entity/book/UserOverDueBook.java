@@ -1,4 +1,4 @@
-package com.example.shelfkeeper.infrastructure.entity.user;
+package com.example.shelfkeeper.infrastructure.entity.book;
 
 import java.time.LocalDate;
 
@@ -8,17 +8,24 @@ import java.time.LocalDate;
  * @author itokanta
  */
 public class UserOverDueBook {
+  /** 書籍の識別子。 */
+  private final Integer bookId;
   /** 書籍のタイトル。 */
   private final String bookTitle;
   /** 貸出日。 */
   private final LocalDate loanDate;
   /** 返却期限日。 */
   private final LocalDate dueDate;
-  
-  public UserOverDueBook(String bookTitle, LocalDate loanDate, LocalDate dueDate) {
+
+  public UserOverDueBook(Integer bookId, String bookTitle, LocalDate loanDate, LocalDate dueDate) {
+    this.bookId = bookId;
     this.bookTitle = bookTitle;
     this.loanDate = loanDate;
     this.dueDate = dueDate;
+  }
+
+  public Integer getBookId() {
+    return bookId;
   }
 
   public String getBookTitle() {

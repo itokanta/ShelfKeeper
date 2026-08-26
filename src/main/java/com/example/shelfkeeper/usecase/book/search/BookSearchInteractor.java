@@ -45,6 +45,7 @@ public class BookSearchInteractor implements BookSearchUseCase{
 
     for(BookStatus bookStatus : bookList) {
       outputDataList.add(new BookSearchItemOutputData(
+        bookStatus.getId(),
         bookStatus.getTitle(),
         bookStatus.getAuthorName(),
         bookStatus.getStatus()

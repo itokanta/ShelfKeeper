@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.shelfkeeper.infrastructure.entity.book.UserOverDueBook;
 import com.example.shelfkeeper.infrastructure.entity.user.UserOverDue;
-import com.example.shelfkeeper.infrastructure.entity.user.UserOverDueBook;
 import com.example.shelfkeeper.usecase.port.UserRepository;
 
 /**
@@ -40,6 +40,7 @@ public class UserOverDueListInteractor implements UserOverDueListUseCase{
       List<UserOverDueListDueBookItem> bookList = new ArrayList<>();
       for(UserOverDueBook userOverDueBook : userOverDue.getDueBookList()){
         UserOverDueListDueBookItem dueBook = new UserOverDueListDueBookItem(
+          userOverDueBook.getBookId(),
           userOverDueBook.getBookTitle(),
           userOverDueBook.getLoanDate(),
           userOverDueBook.getDueDate()

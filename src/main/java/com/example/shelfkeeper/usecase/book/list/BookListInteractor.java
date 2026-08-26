@@ -36,6 +36,7 @@ public class BookListInteractor implements BookListUseCase{
 
     for(BookStatus bookStatus : findAllResult) {
       outputDataList.add(new BookListItemOutputData(
+        bookStatus.getId(),
         bookStatus.getTitle(),
         bookStatus.getAuthorName(),
         bookStatus.getStatus()

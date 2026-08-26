@@ -57,6 +57,7 @@ public class BookListInteractorTest {
     for(int i = 0; i < itemList.size(); i++) {
       BookStatus bookStatus = findAllResult.get(i);
       BookListItemOutputData outputItem = itemList.get(i);
+      assertEquals(bookStatus.getId(), outputItem.getBookId());
       assertEquals(bookStatus.getTitle(), outputItem.getTitle());
       assertEquals(bookStatus.getAuthorName(), outputItem.getAuthorName());
       assertEquals(bookStatus.getStatus(), outputItem.getStatus());
