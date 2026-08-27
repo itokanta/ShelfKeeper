@@ -2,7 +2,6 @@ package com.example.shelfkeeper.usecase.book.search;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -35,13 +34,8 @@ public class BookSearchInteractor implements BookSearchUseCase{
    */
   @Override
   public void handle(BookSearchInputData bookSearchInputData) {
-    Optional<List<BookStatus>> findByTitleResult = bookRepository.findByTitle(bookSearchInputData.getTitle());
-    List<BookStatus> bookList = new ArrayList<>();
+    List<BookStatus> bookList = bookRepository.findByTitle(bookSearchInputData.getTitle());
     List<BookSearchItemOutputData> outputDataList = new ArrayList<>();
-
-    if(!findByTitleResult.isEmpty()) {
-      bookList = findByTitleResult.get();
-    }
 
     for(BookStatus bookStatus : bookList) {
       outputDataList.add(new BookSearchItemOutputData(

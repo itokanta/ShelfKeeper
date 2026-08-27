@@ -31,9 +31,9 @@ public interface BookRepository {
    * タイトルで蔵書を貸出状態付きで取得する。
    *
    * @param title 書籍のタイトル
-   * @return 該当する蔵書と貸出状態の一覧。存在しない場合は空
+   * @return 該当する蔵書と貸出状態の一覧。該当がない場合は空の一覧
    */
-  Optional<List<BookStatus>> findByTitle(String title);
+  List<BookStatus> findByTitle(String title);
 
   /**
    * 蔵書を登録する。

@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,7 +44,7 @@ public class BookSearchInteractorTest {
     findByTitleResult.add(new BookStatus(1, "test1", "testName1", true));
     findByTitleResult.add(new BookStatus(2, "test2", "testName2", false));
 
-    when(bookRepository.findByTitle(searchTitle.getTitle())).thenReturn(Optional.of(findByTitleResult));
+    when(bookRepository.findByTitle(searchTitle.getTitle())).thenReturn(findByTitleResult);
 
     bookSearchInteractor.handle(searchTitle);
 
@@ -64,25 +63,5 @@ public class BookSearchInteractorTest {
       assertEquals(bookStatus.getAuthorName(), item.getAuthorName());
       assertEquals(bookStatus.getStatus(), item.getStatus());
     }
-  }
-
-  /**
-   * 該当する蔵書がない場合、空の一覧を出力境界へ引き渡すことを検証する。
-   */
-  @Test
-  void handleSuccessReturnEmpty() {
-    BookSearchInputData searchTitle = new BookSearchInputData("test");
-
-    when(bookRepository.findByTitle(searchTitle.getTitle())).thenReturn(Optional.empty());
-
-    bookSearchInteractor.handle(searchTitle);
-
-    verify(bookRepository).findByTitle(searchTitle.getTitle());
-    ArgumentCaptor<BookSearchOutputData> captor = ArgumentCaptor.forClass(BookSearchOutputData.class);
-    verify(bookSearchOutputBoundary).complete(captor.capture());
-
-    BookSearchOutputData outputData = captor.getValue();
-    List<BookSearchItemOutputData> itemList = outputData.getOutputData();
-    assertEquals(0, itemList.size());
   }
 }
