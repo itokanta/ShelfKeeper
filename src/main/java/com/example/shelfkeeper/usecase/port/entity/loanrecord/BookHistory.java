@@ -1,4 +1,4 @@
-package com.example.shelfkeeper.infrastructure.entity.loanrecord;
+package com.example.shelfkeeper.usecase.port.entity.loanrecord;
 
 import java.time.LocalDate;
 

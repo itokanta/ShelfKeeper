@@ -1,8 +1,8 @@
-package com.example.shelfkeeper.infrastructure.entity.user;
+package com.example.shelfkeeper.usecase.port.entity.user;
 
 import java.util.List;
 
-import com.example.shelfkeeper.infrastructure.entity.book.UserOverDueBook;
+import com.example.shelfkeeper.usecase.port.entity.book.UserOverDueBook;
 
 /**
  * 延滞利用者とその延滞書籍一覧を表すエンティティ。

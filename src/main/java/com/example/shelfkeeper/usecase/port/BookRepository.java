@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.shelfkeeper.domain.book.Book;
-import com.example.shelfkeeper.infrastructure.entity.book.BookStatus;
+import com.example.shelfkeeper.usecase.port.entity.book.BookStatus;
 
 /**
  * 蔵書の永続化を担うリポジトリ。

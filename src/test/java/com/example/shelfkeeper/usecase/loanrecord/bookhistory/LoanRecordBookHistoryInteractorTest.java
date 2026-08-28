@@ -15,8 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.example.shelfkeeper.infrastructure.entity.loanrecord.BookHistory;
 import com.example.shelfkeeper.usecase.port.LoanRecordRepository;
+import com.example.shelfkeeper.usecase.port.entity.loanrecord.BookHistory;
 
 /**
  * {@link LoanRecordBookHistoryInteractor} のテストクラス。

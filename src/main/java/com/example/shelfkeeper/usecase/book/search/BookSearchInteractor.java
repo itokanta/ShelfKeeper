@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.example.shelfkeeper.infrastructure.entity.book.BookStatus;
 import com.example.shelfkeeper.usecase.port.BookRepository;
+import com.example.shelfkeeper.usecase.port.entity.book.BookStatus;
 
 /**
  * {@link BookSearchUseCase} の実装クラス。

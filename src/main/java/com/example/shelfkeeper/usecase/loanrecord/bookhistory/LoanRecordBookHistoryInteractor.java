@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.example.shelfkeeper.infrastructure.entity.loanrecord.BookHistory;
 import com.example.shelfkeeper.usecase.port.LoanRecordRepository;
+import com.example.shelfkeeper.usecase.port.entity.loanrecord.BookHistory;
 
 /**
  * {@link LoanRecordBookHistoryUseCase} の実装クラス。

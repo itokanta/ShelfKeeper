@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.example.shelfkeeper.infrastructure.entity.book.UserOverDueBook;
-import com.example.shelfkeeper.infrastructure.entity.user.UserOverDue;
 import com.example.shelfkeeper.usecase.port.UserRepository;
+import com.example.shelfkeeper.usecase.port.entity.book.UserOverDueBook;
+import com.example.shelfkeeper.usecase.port.entity.user.UserOverDue;
 
 /**
  * {@link UserOverDueListUseCase} の実装クラス。

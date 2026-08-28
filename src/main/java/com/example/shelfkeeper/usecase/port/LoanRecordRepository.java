@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.shelfkeeper.domain.loanrecord.LoanRecord;
-import com.example.shelfkeeper.infrastructure.entity.loanrecord.BookHistory;
+import com.example.shelfkeeper.usecase.port.entity.loanrecord.BookHistory;
 
 /**
  * 貸出記録の永続化を担うリポジトリ。

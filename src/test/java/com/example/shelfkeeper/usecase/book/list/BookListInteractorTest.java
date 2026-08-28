@@ -14,8 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.example.shelfkeeper.infrastructure.entity.book.BookStatus;
 import com.example.shelfkeeper.usecase.port.BookRepository;
+import com.example.shelfkeeper.usecase.port.entity.book.BookStatus;
 
 /**
  * {@link BookListInteractor} のテストクラス。

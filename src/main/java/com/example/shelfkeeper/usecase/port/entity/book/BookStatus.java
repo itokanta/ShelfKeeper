@@ -1,4 +1,4 @@
-package com.example.shelfkeeper.infrastructure.entity.book;
+package com.example.shelfkeeper.usecase.port.entity.book;
 
 /**
  * 蔵書とその貸出状態を表すエンティティ。

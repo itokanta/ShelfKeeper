@@ -1,4 +1,4 @@
-package com.example.shelfkeeper.infrastructure.entity.book;
+package com.example.shelfkeeper.usecase.port.entity.book;
 
 import java.time.LocalDate;
 
