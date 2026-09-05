@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.shelfkeeper.adapter.web.errorresponse.BadRequestException;
 import com.example.shelfkeeper.domain.user.User;
 import com.example.shelfkeeper.usecase.port.UserRepository;
 
@@ -82,7 +83,7 @@ public class UserUpdateInteractorTest {
 
     when(userRepository.findById(inputData.getId())).thenReturn(Optional.empty());
 
-    assertThrows(RuntimeException.class, () -> userUpdateInteractor.handle(inputData));
+    assertThrows(BadRequestException.class, () -> userUpdateInteractor.handle(inputData));
     verify(userRepository).findById(inputData.getId());
     verify(userRepository, never()).userUpdate(any());
   }

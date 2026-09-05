@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.shelfkeeper.adapter.web.errorresponse.BadRequestException;
 import com.example.shelfkeeper.domain.user.User;
 import com.example.shelfkeeper.usecase.port.UserRepository;
 
@@ -55,7 +56,7 @@ public class UserDeleteInteractorTest {
 
     when(userRepository.findById(deleteTarget.getId())).thenReturn(Optional.empty());
 
-    assertThrows(RuntimeException.class, () -> useDeleteInteractor.handle(deleteTarget));
+    assertThrows(BadRequestException.class, () -> useDeleteInteractor.handle(deleteTarget));
     verify(userRepository).findById(deleteTarget.getId());
     verify(userRepository, never()).userDelete(any());
   }

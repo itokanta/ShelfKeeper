@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.shelfkeeper.adapter.web.errorresponse.BadRequestException;
 import com.example.shelfkeeper.domain.book.Book;
 import com.example.shelfkeeper.usecase.port.BookRepository;
 
@@ -55,7 +56,7 @@ public class BookDeleteInteractorTest {
 
     when(bookRepository.findById(deleteTarget.getId())).thenReturn(Optional.empty());
 
-    assertThrows(RuntimeException.class, () -> bookDeleteInteractor.handle(deleteTarget));
+    assertThrows(BadRequestException.class, () -> bookDeleteInteractor.handle(deleteTarget));
     verify(bookRepository).findById(deleteTarget.getId());
     verify(bookRepository, never()).bookDelete(any());
   }

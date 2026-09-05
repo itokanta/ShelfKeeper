@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.shelfkeeper.adapter.web.errorresponse.BadRequestException;
 import com.example.shelfkeeper.domain.adminuser.AdminUser;
 import com.example.shelfkeeper.usecase.port.AdminUserRepository;
 
@@ -31,14 +32,14 @@ public class AdminUserCreateInteractor implements AdminUserCreateUseCase{
    * 同一メールアドレスの管理者が既に存在する場合は例外をスローする。
    *
    * @param adminUserCreateInputData 作成する管理者ユーザーの入力データ
-   * @throws RuntimeException 同一メールアドレスの管理者が既に存在する場合
+   * @throws BadRequestException 同一メールアドレスの管理者が既に存在する場合
    */
 	@Override
   public void handle(AdminUserCreateInputData adminUserCreateInputData) {
     Optional<AdminUser> adminUser = adminUserRepository.findByMail(adminUserCreateInputData.getMail());
 
     if (!adminUser.isEmpty()){
-      throw new RuntimeException("入力されたメールアドレスはすでに登録されています");
+      throw new BadRequestException("入力されたメールアドレスはすでに登録されています");
     }
 
     String hashPass = passwordEncoder.encode(adminUserCreateInputData.getPass());

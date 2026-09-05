@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.example.shelfkeeper.adapter.web.errorresponse.BadRequestException;
 import com.example.shelfkeeper.domain.adminuser.AdminUser;
 import com.example.shelfkeeper.usecase.port.AdminUserRepository;
 
@@ -68,7 +69,7 @@ public class AdminUserCreateInteractorTest {
 
     when(adminUserRepository.findByMail(newUser.getMail())).thenReturn(Optional.of(new AdminUser(1, "test", "test@test", "hashed-pass")));
 
-    assertThrows(RuntimeException.class, () -> adminUserCreateInteractor.handle(newUser));
+    assertThrows(BadRequestException.class, () -> adminUserCreateInteractor.handle(newUser));
 
     verify(adminUserRepository).findByMail(newUser.getMail());
     verify(adminUserRepository, never()).adminUserCreate(any());

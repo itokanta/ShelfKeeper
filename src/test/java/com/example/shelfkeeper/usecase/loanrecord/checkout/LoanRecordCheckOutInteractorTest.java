@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.shelfkeeper.adapter.web.errorresponse.BadRequestException;
 import com.example.shelfkeeper.domain.book.Book;
 import com.example.shelfkeeper.domain.loanrecord.LoanRecord;
 import com.example.shelfkeeper.domain.user.User;
@@ -87,7 +88,7 @@ public class LoanRecordCheckOutInteractorTest {
     when(userRepository.findById(inputData.getUserId())).thenReturn(Optional.of(findByUserIdResult));
     when(bookRepository.findById(inputData.getBookId())).thenReturn(Optional.of(findByBookIdResult));
 
-    assertThrows(RuntimeException.class, () -> loanRecordCheckOutInteractor.handle(inputData));
+    assertThrows(BadRequestException.class, () -> loanRecordCheckOutInteractor.handle(inputData));
 
     verify(loanRecordRepository).returnDateIsNullFindByBookId(inputData.getBookId());
     verify(userRepository).findById(inputData.getUserId());
@@ -107,7 +108,7 @@ public class LoanRecordCheckOutInteractorTest {
     when(userRepository.findById(inputData.getUserId())).thenReturn(Optional.empty());
     when(bookRepository.findById(inputData.getBookId())).thenReturn(Optional.of(findByBookIdResult));
 
-    assertThrows(RuntimeException.class, () -> loanRecordCheckOutInteractor.handle(inputData));
+    assertThrows(BadRequestException.class, () -> loanRecordCheckOutInteractor.handle(inputData));
 
     verify(loanRecordRepository).returnDateIsNullFindByBookId(inputData.getBookId());
     verify(userRepository).findById(inputData.getUserId());
@@ -127,7 +128,7 @@ public class LoanRecordCheckOutInteractorTest {
     when(userRepository.findById(inputData.getUserId())).thenReturn(Optional.of(findByUserIdResult));
     when(bookRepository.findById(inputData.getBookId())).thenReturn(Optional.empty());
 
-    assertThrows(RuntimeException.class, () -> loanRecordCheckOutInteractor.handle(inputData));
+    assertThrows(BadRequestException.class, () -> loanRecordCheckOutInteractor.handle(inputData));
 
     verify(loanRecordRepository).returnDateIsNullFindByBookId(inputData.getBookId());
     verify(userRepository).findById(inputData.getUserId());

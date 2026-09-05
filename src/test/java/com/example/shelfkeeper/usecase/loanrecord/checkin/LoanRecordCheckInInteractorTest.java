@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.shelfkeeper.adapter.web.errorresponse.BadRequestException;
 import com.example.shelfkeeper.domain.loanrecord.LoanRecord;
 import com.example.shelfkeeper.usecase.port.LoanRecordRepository;
 
@@ -68,7 +69,7 @@ public class LoanRecordCheckInInteractorTest {
 
     when(loanRecordRepository.findById(inInputData.getId())).thenReturn(Optional.empty());
 
-    assertThrows(RuntimeException.class, () -> loanRecordCheckInInteractor.handle(inInputData));
+    assertThrows(BadRequestException.class, () -> loanRecordCheckInInteractor.handle(inInputData));
     verify(loanRecordRepository).findById(inInputData.getId());
     verify(loanRecordRepository, never()).checkIn(any());
   }
@@ -83,7 +84,7 @@ public class LoanRecordCheckInInteractorTest {
 
     when(loanRecordRepository.findById(inInputData.getId())).thenReturn(Optional.of(findByIdResult));
 
-    assertThrows(RuntimeException.class, () -> loanRecordCheckInInteractor.handle(inInputData));
+    assertThrows(BadRequestException.class, () -> loanRecordCheckInInteractor.handle(inInputData));
     verify(loanRecordRepository).findById(inInputData.getId());
     verify(loanRecordRepository, never()).checkIn(any());
   }

@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.example.shelfkeeper.adapter.web.errorresponse.BadRequestException;
 import com.example.shelfkeeper.domain.user.User;
 import com.example.shelfkeeper.usecase.port.UserRepository;
 
@@ -27,7 +28,7 @@ public class UserDeleteInteractor implements UserDeleteUseCase{
    * 指定された識別子の利用者が存在しない場合は例外をスローする。
    *
    * @param userDeleteInputData 削除する利用者の入力データ
-   * @throws RuntimeException 指定された利用者が存在しない場合
+   * @throws BadRequestException 指定された利用者が存在しない場合
    */
   @Override
   public void handle(UserDeleteInputData userDeleteInputData) {
@@ -35,7 +36,7 @@ public class UserDeleteInteractor implements UserDeleteUseCase{
     Optional<User> deleteTarget = userRepository.findById(deleteTargetId);
 
     if(deleteTarget.isEmpty()){
-      throw new RuntimeException("指定されたユーザーは存在しません");
+      throw new BadRequestException("指定されたユーザーは存在しません");
     }
 
     userRepository.userDelete(deleteTargetId);

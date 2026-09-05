@@ -2,6 +2,7 @@ package com.example.shelfkeeper.usecase.book.delete;
 
 import java.util.Optional;
 
+import com.example.shelfkeeper.adapter.web.errorresponse.BadRequestException;
 import com.example.shelfkeeper.domain.book.Book;
 import com.example.shelfkeeper.usecase.port.BookRepository;
 
@@ -24,7 +25,7 @@ public class BookDeleteInteractor implements BookDeleteUseCase{
    * 指定された識別子の蔵書が存在しない場合は例外をスローする。
    *
    * @param bookDeleteInputData 削除する蔵書の入力データ
-   * @throws RuntimeException 指定された蔵書が存在しない場合
+   * @throws BadRequestException 指定された蔵書が存在しない場合
    */
   @Override
   public void handle(BookDeleteInputData bookDeleteInputData) {
@@ -32,7 +33,7 @@ public class BookDeleteInteractor implements BookDeleteUseCase{
     Optional<Book> deleteTarget = bookRepository.findById(deleteTargetId);
 
     if(deleteTarget.isEmpty()) {
-      throw new RuntimeException("指定された書籍は登録されていません");
+      throw new BadRequestException("指定された書籍は登録されていません");
     }
 
     bookRepository.bookDelete(deleteTargetId);

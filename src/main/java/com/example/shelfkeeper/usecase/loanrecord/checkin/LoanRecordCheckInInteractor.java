@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.example.shelfkeeper.adapter.web.errorresponse.BadRequestException;
 import com.example.shelfkeeper.domain.loanrecord.LoanRecord;
 import com.example.shelfkeeper.usecase.port.LoanRecordRepository;
 
@@ -28,20 +29,20 @@ public class LoanRecordCheckInInteractor implements LoanRecordCheckInUseCase{
    * 指定された貸出記録が存在しない場合、またはすでに返却済みの場合は例外をスローする。
    *
    * @param loanRecordCheckInInputData 返却する貸出記録の入力データ
-   * @throws RuntimeException 指定された貸出記録が存在しない場合、またはすでに返却済みの場合
+   * @throws BadRequestException 指定された貸出記録が存在しない場合、またはすでに返却済みの場合
    */
   @Override
   public void handle(LoanRecordCheckInInputData loanRecordCheckInInputData) {
     Optional<LoanRecord> findByIdResult = loanRecordRepository.findById(loanRecordCheckInInputData.getId());
     
     if(findByIdResult.isEmpty()) {
-      throw new RuntimeException("指定された書籍には貸出記録がありません");
+      throw new BadRequestException("指定された書籍には貸出記録がありません");
     }
 
     LoanRecord checkInTarget = findByIdResult.get();
 
     if(checkInTarget.getReturnDate() != null) {
-      throw new RuntimeException("指定された書籍はすでに返却済みです");
+      throw new BadRequestException("指定された書籍はすでに返却済みです");
     }
 
     loanRecordRepository.checkIn(new LoanRecord(checkInTarget.getId(), checkInTarget.getUserId(), checkInTarget.getBookId(), checkInTarget.getLoanDate(), checkInTarget.getDueDate(), LocalDate.now()));

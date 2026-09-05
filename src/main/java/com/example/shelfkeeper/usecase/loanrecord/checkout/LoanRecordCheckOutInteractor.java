@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.example.shelfkeeper.adapter.web.errorresponse.BadRequestException;
 import com.example.shelfkeeper.domain.book.Book;
 import com.example.shelfkeeper.domain.loanrecord.LoanRecord;
 import com.example.shelfkeeper.domain.user.User;
@@ -37,7 +38,7 @@ public class LoanRecordCheckOutInteractor implements LoanRecordCheckOutUseCase{
    * すでに貸出中の書籍、未登録の利用者、または未登録の書籍の場合は例外をスローする。
    *
    * @param loanRecordCheckOutInputData 登録する貸出記録の入力データ
-   * @throws RuntimeException すでに貸出中の場合、利用者が存在しない場合、または蔵書が存在しない場合
+   * @throws BadRequestException すでに貸出中の場合、利用者が存在しない場合、または蔵書が存在しない場合
    */
   @Override
   public void handle(LoanRecordCheckOutInputData loanRecordCheckOutInputData) {
@@ -46,15 +47,15 @@ public class LoanRecordCheckOutInteractor implements LoanRecordCheckOutUseCase{
     Optional<Book> findByBookIdResult = bookRepository.findById(loanRecordCheckOutInputData.getBookId());
     
     if(!loanedCheck.isEmpty()) {
-      throw new RuntimeException("該当の書籍はすでに貸出中です");
+      throw new BadRequestException("該当の書籍はすでに貸出中です");
     }
 
     if(findByUserIdResult.isEmpty()) {
-      throw new RuntimeException("指定されたユーザーは登録されていません");
+      throw new BadRequestException("指定されたユーザーは登録されていません");
     }
 
     if(findByBookIdResult.isEmpty()) {
-      throw new RuntimeException("指定された書籍は登録されていません");
+      throw new BadRequestException("指定された書籍は登録されていません");
     }
 
     LoanRecord loan = LoanRecord.checkOut(loanRecordCheckOutInputData.getUserId(), loanRecordCheckOutInputData.getBookId());
