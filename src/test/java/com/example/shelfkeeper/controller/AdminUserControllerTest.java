@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -32,6 +33,8 @@ import com.example.shelfkeeper.usecase.adminuser.delete.AdminUserDeleteInputData
 import com.example.shelfkeeper.usecase.adminuser.delete.AdminUserDeleteUseCase;
 import com.example.shelfkeeper.usecase.adminuser.findsingle.AdminUserFindSingleInputData;
 import com.example.shelfkeeper.usecase.adminuser.findsingle.AdminUserFindSingleUseCase;
+import com.example.shelfkeeper.usecase.adminuser.update.AdminUserUpdateInputData;
+import com.example.shelfkeeper.usecase.adminuser.update.AdminUserUpdateUseCase;
 
 /**
  * {@link com.example.shelfkeeper.adapter.web.adminuser.AdminUserController} のテストクラス。
@@ -55,6 +58,9 @@ public class AdminUserControllerTest {
 
   @MockitoBean
   private AdminUserFindSinglePresenter adminUserFindSinglePresenter;
+
+  @MockitoBean
+  private AdminUserUpdateUseCase adminUserUpdateUseCase;
 
   @Autowired 
   public AdminUserControllerTest(MockMvc mockMvc) {
@@ -139,5 +145,54 @@ public class AdminUserControllerTest {
     verify(adminUserFindSingleUseCase).handle(captor.capture());
 
     assertEquals(1, captor.getValue().getId());
+  }
+
+  /**
+   * ログイン中の管理者ユーザーを更新できることを検証する。
+   */
+  @Test
+  void updateSuccess() throws Exception {
+    LoginUser loginUser = new LoginUser(new AdminUser(1, "test", "test@test.com", "testHashed"));
+
+    mockMvc.perform(put("/adminusers")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"name\":\"test2\",\"mail\":\"test2@test.com\",\"pass\":\"testTest2\"}")
+            .with(request -> {
+              SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities())
+              );
+              return request;
+            }))
+            .andExpect(status().isNoContent());
+
+    ArgumentCaptor<AdminUserUpdateInputData> captor = ArgumentCaptor.forClass(AdminUserUpdateInputData.class);
+    verify(adminUserUpdateUseCase).handle(captor.capture());
+
+    AdminUserUpdateInputData inputData = captor.getValue();
+    assertEquals(1, inputData.getId());
+    assertEquals("test2", inputData.getName());
+    assertEquals("test2@test.com", inputData.getMail());
+    assertEquals("testTest2", inputData.getPass());
+  }
+
+  /**
+   * バリデーションエラーの場合、更新ユースケースを呼び出さないことを検証する。
+   */
+  @Test
+  void updateValidationError() throws Exception {
+    LoginUser loginUser = new LoginUser(new AdminUser(1, "test", "test@test.com", "testHashed"));
+
+    mockMvc.perform(put("/adminusers")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"name\":\"test2\",\"mail\":\"test2test\",\"pass\":\"testTest2\"}")
+            .with(request -> {
+              SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities())
+              );
+              return request;
+            }))
+            .andExpect(status().isBadRequest());
+
+    verify(adminUserUpdateUseCase, never()).handle(any());
   }
 }

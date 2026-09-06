@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,12 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.shelfkeeper.adapter.web.adminuser.create.AdminUserCreateRequest;
 import com.example.shelfkeeper.adapter.web.adminuser.findsingle.AdminUserFindSinglePresenter;
 import com.example.shelfkeeper.adapter.web.adminuser.findsingle.AdminUserFindSingleResponse;
+import com.example.shelfkeeper.adapter.web.adminuser.update.AdminUserUpdateRequest;
 import com.example.shelfkeeper.security.LoginUser;
 import com.example.shelfkeeper.usecase.adminuser.create.AdminUserCreateUseCase;
 import com.example.shelfkeeper.usecase.adminuser.delete.AdminUserDeleteInputData;
 import com.example.shelfkeeper.usecase.adminuser.delete.AdminUserDeleteUseCase;
 import com.example.shelfkeeper.usecase.adminuser.findsingle.AdminUserFindSingleInputData;
 import com.example.shelfkeeper.usecase.adminuser.findsingle.AdminUserFindSingleUseCase;
+import com.example.shelfkeeper.usecase.adminuser.update.AdminUserUpdateUseCase;
 
 import jakarta.validation.Valid;
 
@@ -41,14 +44,17 @@ public class AdminUserController {
   private final AdminUserFindSingleUseCase adminUserFindSingleUseCase;
   /** 管理者ユーザー1件取得のプレゼンター。 */
   private final AdminUserFindSinglePresenter adminUserFindSinglePresenter;
+  /** 管理者ユーザー更新ユースケース。 */
+  private final AdminUserUpdateUseCase adminUserUpdateUseCase;
 
   public AdminUserController(AdminUserCreateUseCase adminUserCreateUseCase,
       AdminUserDeleteUseCase adminUserDeleteUseCase, AdminUserFindSingleUseCase adminUserFindSingleUseCase,
-      AdminUserFindSinglePresenter adminUserFindSinglePresenter) {
+      AdminUserFindSinglePresenter adminUserFindSinglePresenter, AdminUserUpdateUseCase adminUserUpdateUseCase) {
     this.adminUserCreateUseCase = adminUserCreateUseCase;
     this.adminUserDeleteUseCase = adminUserDeleteUseCase;
     this.adminUserFindSingleUseCase = adminUserFindSingleUseCase;
     this.adminUserFindSinglePresenter = adminUserFindSinglePresenter;
+    this.adminUserUpdateUseCase = adminUserUpdateUseCase;
   }
 
   /**
@@ -85,5 +91,18 @@ public class AdminUserController {
   public ResponseEntity<AdminUserFindSingleResponse> findSingle(@AuthenticationPrincipal LoginUser loginUser) {
     adminUserFindSingleUseCase.handle(new AdminUserFindSingleInputData(loginUser.getAdminUser().getId()));
     return ResponseEntity.ok(adminUserFindSinglePresenter.getResponse());
+  }
+
+  /**
+   * ログイン中の管理者ユーザーを更新する。
+   *
+   * @param loginUser 認証済みの管理者ユーザー
+   * @param request 更新リクエスト
+   * @return 更新成功時は 204 No Content
+   */
+  @PutMapping("")
+  public ResponseEntity<Void> update(@AuthenticationPrincipal LoginUser loginUser, @RequestBody @Valid AdminUserUpdateRequest request) {
+    adminUserUpdateUseCase.handle(request.toInputData(loginUser.getAdminUser().getId()));
+    return ResponseEntity.noContent().build();
   }
 }
