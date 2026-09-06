@@ -23,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.example.shelfkeeper.adapter.web.adminuser.AdminUserController;
 import com.example.shelfkeeper.adapter.web.adminuser.findsingle.AdminUserFindSinglePresenter;
 import com.example.shelfkeeper.adapter.web.adminuser.findsingle.AdminUserFindSingleResponse;
 import com.example.shelfkeeper.domain.adminuser.AdminUser;
@@ -37,11 +38,11 @@ import com.example.shelfkeeper.usecase.adminuser.update.AdminUserUpdateInputData
 import com.example.shelfkeeper.usecase.adminuser.update.AdminUserUpdateUseCase;
 
 /**
- * {@link com.example.shelfkeeper.adapter.web.adminuser.AdminUserController} のテストクラス。
+ * {@link AdminUserController} のテストクラス。
  *
  * @author itokanta
  */
-@WebMvcTest
+@WebMvcTest(AdminUserController.class)
 @AutoConfigureMockMvc(addFilters =  false)
 public class AdminUserControllerTest {
 
