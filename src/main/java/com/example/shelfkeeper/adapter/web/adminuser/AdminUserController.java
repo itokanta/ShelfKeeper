@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,10 +13,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.shelfkeeper.adapter.web.adminuser.create.AdminUserCreateRequest;
+import com.example.shelfkeeper.adapter.web.adminuser.findsingle.AdminUserFindSinglePresenter;
+import com.example.shelfkeeper.adapter.web.adminuser.findsingle.AdminUserFindSingleResponse;
 import com.example.shelfkeeper.security.LoginUser;
 import com.example.shelfkeeper.usecase.adminuser.create.AdminUserCreateUseCase;
 import com.example.shelfkeeper.usecase.adminuser.delete.AdminUserDeleteInputData;
 import com.example.shelfkeeper.usecase.adminuser.delete.AdminUserDeleteUseCase;
+import com.example.shelfkeeper.usecase.adminuser.findsingle.AdminUserFindSingleInputData;
+import com.example.shelfkeeper.usecase.adminuser.findsingle.AdminUserFindSingleUseCase;
 
 import jakarta.validation.Valid;
 
@@ -32,11 +37,18 @@ public class AdminUserController {
   private final AdminUserCreateUseCase adminUserCreateUseCase;
   /** 管理者ユーザー削除ユースケース。 */
   private final AdminUserDeleteUseCase adminUserDeleteUseCase;
+  /** 管理者ユーザー1件取得ユースケース。 */
+  private final AdminUserFindSingleUseCase adminUserFindSingleUseCase;
+  /** 管理者ユーザー1件取得のプレゼンター。 */
+  private final AdminUserFindSinglePresenter adminUserFindSinglePresenter;
 
   public AdminUserController(AdminUserCreateUseCase adminUserCreateUseCase,
-      AdminUserDeleteUseCase adminUserDeleteUseCase) {
+      AdminUserDeleteUseCase adminUserDeleteUseCase, AdminUserFindSingleUseCase adminUserFindSingleUseCase,
+      AdminUserFindSinglePresenter adminUserFindSinglePresenter) {
     this.adminUserCreateUseCase = adminUserCreateUseCase;
     this.adminUserDeleteUseCase = adminUserDeleteUseCase;
+    this.adminUserFindSingleUseCase = adminUserFindSingleUseCase;
+    this.adminUserFindSinglePresenter = adminUserFindSinglePresenter;
   }
 
   /**
@@ -61,5 +73,17 @@ public class AdminUserController {
   public ResponseEntity<Void> delete(@AuthenticationPrincipal LoginUser loginUser) {
     adminUserDeleteUseCase.handle(new AdminUserDeleteInputData(loginUser.getAdminUser().getId()));
     return ResponseEntity.noContent().build();
+  }
+
+  /**
+   * ログイン中の管理者ユーザーを1件取得する。
+   *
+   * @param loginUser 認証済みの管理者ユーザー
+   * @return 取得した管理者ユーザー情報
+   */
+  @GetMapping("/me")
+  public ResponseEntity<AdminUserFindSingleResponse> findSingle(@AuthenticationPrincipal LoginUser loginUser) {
+    adminUserFindSingleUseCase.handle(new AdminUserFindSingleInputData(loginUser.getAdminUser().getId()));
+    return ResponseEntity.ok(adminUserFindSinglePresenter.getResponse());
   }
 }
