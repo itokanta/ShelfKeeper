@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.example.shelfkeeper.adapter.web.adminuser.AdminUserController;
 import com.example.shelfkeeper.adapter.web.adminuser.findsingle.AdminUserFindSinglePresenter;
 import com.example.shelfkeeper.adapter.web.book.BookController;
+import com.example.shelfkeeper.adapter.web.book.list.BookListPresenter;
 import com.example.shelfkeeper.adapter.web.errorresponse.BadRequestException;
 import com.example.shelfkeeper.adapter.web.errorresponse.GlobalExceptionHandler;
 import com.example.shelfkeeper.usecase.adminuser.create.AdminUserCreateUseCase;
@@ -28,6 +29,8 @@ import com.example.shelfkeeper.usecase.adminuser.findsingle.AdminUserFindSingleU
 import com.example.shelfkeeper.usecase.adminuser.update.AdminUserUpdateUseCase;
 import com.example.shelfkeeper.usecase.book.create.BookCreateUseCase;
 import com.example.shelfkeeper.usecase.book.delete.BookDeleteUseCase;
+import com.example.shelfkeeper.usecase.book.list.BookListUseCase;
+import com.example.shelfkeeper.usecase.book.search.BookSearchUseCase;
 
 /**
  * {@link GlobalExceptionHandler} のテストクラス。
@@ -60,6 +63,15 @@ public class GlobalExceptionHandlerTest {
 
   @MockitoBean
   private BookDeleteUseCase bookDeleteUseCase;
+
+  @MockitoBean
+  private BookListUseCase bookListUseCase;
+
+  @MockitoBean
+  private BookListPresenter bookListPresenter;
+
+  @MockitoBean
+  private BookSearchUseCase bookSearchUseCase;
 
   @Autowired
   public GlobalExceptionHandlerTest(MockMvc mockMvc) {

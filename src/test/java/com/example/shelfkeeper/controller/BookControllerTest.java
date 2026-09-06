@@ -4,9 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -18,10 +23,15 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.shelfkeeper.adapter.web.book.BookController;
+import com.example.shelfkeeper.adapter.web.book.list.BookListItem;
+import com.example.shelfkeeper.adapter.web.book.list.BookListPresenter;
+import com.example.shelfkeeper.adapter.web.book.list.BookListResponse;
 import com.example.shelfkeeper.usecase.book.create.BookCreateInputData;
 import com.example.shelfkeeper.usecase.book.create.BookCreateUseCase;
 import com.example.shelfkeeper.usecase.book.delete.BookDeleteInputData;
 import com.example.shelfkeeper.usecase.book.delete.BookDeleteUseCase;
+import com.example.shelfkeeper.usecase.book.list.BookListUseCase;
+import com.example.shelfkeeper.usecase.book.search.BookSearchUseCase;
 
 /**
  * {@link BookController} のテストクラス。
@@ -38,6 +48,15 @@ public class BookControllerTest {
 
   @MockitoBean
   private BookDeleteUseCase bookDeleteUseCase;
+
+  @MockitoBean
+  private BookListUseCase bookListUseCase;
+
+  @MockitoBean
+  private BookListPresenter bookListPresenter;
+
+  @MockitoBean
+  private BookSearchUseCase bookSearchUseCase;
 
   @Autowired
   public BookControllerTest(MockMvc mockMvc) {
@@ -98,5 +117,23 @@ public class BookControllerTest {
             .andExpect(status().isBadRequest());
 
     verify(bookDeleteUseCase, never()).handle(any());
+  }
+
+  /**
+   * 蔵書一覧の取得に成功することを検証する。
+   */
+  @Test
+  void listSuccess() throws Exception {
+    BookListResponse response = new BookListResponse(List.of(new BookListItem(1, "test", "testName", "貸出可能")));
+    when(bookListPresenter.getBookListResponse()).thenReturn(response);
+
+    mockMvc.perform(get("/books"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.bookList[0].bookId").value(1))
+            .andExpect(jsonPath("$.bookList[0].title").value("test"))
+            .andExpect(jsonPath("$.bookList[0].authorName").value("testName"))
+            .andExpect(jsonPath("$.bookList[0].status").value("貸出可能"));
+
+    verify(bookListUseCase).handle();
   }
 }
