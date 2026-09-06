@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -19,6 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.example.shelfkeeper.adapter.web.book.BookController;
 import com.example.shelfkeeper.usecase.book.create.BookCreateInputData;
 import com.example.shelfkeeper.usecase.book.create.BookCreateUseCase;
+import com.example.shelfkeeper.usecase.book.delete.BookDeleteInputData;
+import com.example.shelfkeeper.usecase.book.delete.BookDeleteUseCase;
 
 /**
  * {@link BookController} のテストクラス。
@@ -32,6 +35,9 @@ public class BookControllerTest {
 
   @MockitoBean
   private BookCreateUseCase bookCreateUseCase;
+
+  @MockitoBean
+  private BookDeleteUseCase bookDeleteUseCase;
 
   @Autowired
   public BookControllerTest(MockMvc mockMvc) {
@@ -67,5 +73,30 @@ public class BookControllerTest {
             .andExpect(status().isBadRequest());
 
     verify(bookCreateUseCase, never()).handle(any());
+  }
+
+  /**
+   * 蔵書を削除できることを検証する。
+   */
+  @Test
+  void deleteSuccess() throws Exception {
+    mockMvc.perform(delete("/books/1"))
+            .andExpect(status().isNoContent());
+
+    ArgumentCaptor<BookDeleteInputData> captor = ArgumentCaptor.forClass(BookDeleteInputData.class);
+    verify(bookDeleteUseCase).handle(captor.capture());
+
+    assertEquals(1, captor.getValue().getId());
+  }
+
+  /**
+   * 書籍IDのバリデーションエラーの場合、削除ユースケースを呼び出さないことを検証する。
+   */
+  @Test
+  void deleteValidationError() throws Exception {
+    mockMvc.perform(delete("/books/0"))
+            .andExpect(status().isBadRequest());
+
+    verify(bookDeleteUseCase, never()).handle(any());
   }
 }

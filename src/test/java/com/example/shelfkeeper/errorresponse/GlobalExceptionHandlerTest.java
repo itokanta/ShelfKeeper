@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -17,16 +18,23 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.shelfkeeper.adapter.web.adminuser.AdminUserController;
+import com.example.shelfkeeper.adapter.web.adminuser.findsingle.AdminUserFindSinglePresenter;
+import com.example.shelfkeeper.adapter.web.book.BookController;
 import com.example.shelfkeeper.adapter.web.errorresponse.BadRequestException;
 import com.example.shelfkeeper.adapter.web.errorresponse.GlobalExceptionHandler;
 import com.example.shelfkeeper.usecase.adminuser.create.AdminUserCreateUseCase;
+import com.example.shelfkeeper.usecase.adminuser.delete.AdminUserDeleteUseCase;
+import com.example.shelfkeeper.usecase.adminuser.findsingle.AdminUserFindSingleUseCase;
+import com.example.shelfkeeper.usecase.adminuser.update.AdminUserUpdateUseCase;
+import com.example.shelfkeeper.usecase.book.create.BookCreateUseCase;
+import com.example.shelfkeeper.usecase.book.delete.BookDeleteUseCase;
 
 /**
  * {@link GlobalExceptionHandler} のテストクラス。
  *
  * @author itokanta
  */
-@WebMvcTest(controllers = AdminUserController.class)
+@WebMvcTest(controllers = {AdminUserController.class, BookController.class})
 @AutoConfigureMockMvc(addFilters = false)
 public class GlobalExceptionHandlerTest {
 
@@ -34,6 +42,24 @@ public class GlobalExceptionHandlerTest {
 
   @MockitoBean
   private AdminUserCreateUseCase adminUserCreateUseCase;
+
+  @MockitoBean
+  private AdminUserDeleteUseCase adminUserDeleteUseCase;
+
+  @MockitoBean
+  private AdminUserFindSingleUseCase adminUserFindSingleUseCase;
+
+  @MockitoBean
+  private AdminUserFindSinglePresenter adminUserFindSinglePresenter;
+
+  @MockitoBean
+  private AdminUserUpdateUseCase adminUserUpdateUseCase;
+
+  @MockitoBean
+  private BookCreateUseCase bookCreateUseCase;
+
+  @MockitoBean
+  private BookDeleteUseCase bookDeleteUseCase;
 
   @Autowired
   public GlobalExceptionHandlerTest(MockMvc mockMvc) {
@@ -54,6 +80,19 @@ public class GlobalExceptionHandlerTest {
           .andExpect(jsonPath("$.details.name").value("名前は必須です"))
           .andExpect(jsonPath("$.details.mail").value("メールアドレスとして不正な形式です"));
     verify(adminUserCreateUseCase, never()).handle(any());
+  }
+
+  /**
+   * メソッド引数バリデーションエラー時に 400 と詳細メッセージを返すことを検証する。
+   */
+  @Test
+  void handleHandlerMethodValidationError() throws Exception {
+    mockMvc.perform(delete("/books/0"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.message").value("バリデーションエラー"))
+            .andExpect(jsonPath("$.details.id").value("書籍IDは1以上で指定してください"));
+    verify(bookDeleteUseCase, never()).handle(any());
   }
 
   /**
