@@ -6,6 +6,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -17,6 +18,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -26,6 +28,8 @@ import com.example.shelfkeeper.adapter.web.loanrecord.bookhistory.LoanRecordBook
 import com.example.shelfkeeper.adapter.web.loanrecord.bookhistory.LoanRecordBookHistoryResponse;
 import com.example.shelfkeeper.usecase.loanrecord.bookhistory.LoanRecordBookHistoryInputData;
 import com.example.shelfkeeper.usecase.loanrecord.bookhistory.LoanRecordBookHistoryUseCase;
+import com.example.shelfkeeper.usecase.loanrecord.checkout.LoanRecordCheckOutInputData;
+import com.example.shelfkeeper.usecase.loanrecord.checkout.LoanRecordCheckOutUseCase;
 
 /**
  * {@link LoanRecordController} のテストクラス。
@@ -42,6 +46,9 @@ public class LoanRecordControllerTest {
 
   @MockitoBean
   private LoanRecordBookHistoryPresenter loanRecordBookHistoryPresenter;
+
+  @MockitoBean
+  private LoanRecordCheckOutUseCase loanRecordCheckOutUseCase;
 
   @Autowired
   public LoanRecordControllerTest(MockMvc mockMvc) {
@@ -91,5 +98,36 @@ public class LoanRecordControllerTest {
         .andExpect(status().isBadRequest());
 
     verify(loanRecordBookHistoryUseCase, never()).handle(any());
+  }
+
+  /**
+   * 貸出記録の登録に成功することを検証する。
+   */
+  @Test
+  void checkOutSuccess() throws Exception {
+    mockMvc.perform(post("/loanrecords")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"userId\":\"1\",\"bookId\":\"2\"}"))
+        .andExpect(status().isCreated());
+
+    ArgumentCaptor<LoanRecordCheckOutInputData> captor = ArgumentCaptor.forClass(LoanRecordCheckOutInputData.class);
+    verify(loanRecordCheckOutUseCase).handle(captor.capture());
+
+    LoanRecordCheckOutInputData inputData = captor.getValue();
+    assertEquals(1, inputData.getUserId());
+    assertEquals(2, inputData.getBookId());
+  }
+
+  /**
+   * バリデーションエラーの場合、貸出記録登録ユースケースを呼び出さないことを検証する。
+   */
+  @Test
+  void checkOutValidationError() throws Exception {
+    mockMvc.perform(post("/loanrecords")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"userId\":\"0\",\"bookId\":\"0\"}"))
+        .andExpect(status().isBadRequest());
+
+    verify(loanRecordCheckOutUseCase, never()).handle(any());
   }
 }
