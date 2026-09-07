@@ -87,7 +87,7 @@ public class LoanRecordControllerTest {
   @Test
   void bookHistoryValidationError() throws Exception {
     mockMvc.perform(get("/loanrecords/bookhistory")
-            .param("bookId", ""))
+            .param("bookId", "0"))
         .andExpect(status().isBadRequest());
 
     verify(loanRecordBookHistoryUseCase, never()).handle(any());

@@ -104,7 +104,7 @@ public class BookController {
    * @return 検索結果の蔵書一覧
    */
   @GetMapping("search")
-  public ResponseEntity<BookSearchResponse> search(@ModelAttribute BookSearchRequest request) {
+  public ResponseEntity<BookSearchResponse> search(@ModelAttribute @Valid BookSearchRequest request) {
     bookSearchUseCase.handle(request.toBookSearchInputData());
     return ResponseEntity.ok(bookSearchPresenter.getResponse());
   }

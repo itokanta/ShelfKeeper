@@ -165,4 +165,15 @@ public class BookControllerTest {
 
     assertEquals("test", captor.getValue().getTitle());
   }
+
+  /**
+   * タイトルのバリデーションエラーの場合、検索ユースケースを呼び出さないことを検証する。
+   */
+  @Test
+  void searchValidationError() throws Exception {
+    mockMvc.perform(get("/books/search"))
+        .andExpect(status().isBadRequest());
+
+    verify(bookSearchUseCase, never()).handle(any());
+  }
 }
