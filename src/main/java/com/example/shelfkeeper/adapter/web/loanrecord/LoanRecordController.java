@@ -5,7 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,9 +18,12 @@ import com.example.shelfkeeper.adapter.web.loanrecord.bookhistory.LoanRecordBook
 import com.example.shelfkeeper.adapter.web.loanrecord.bookhistory.LoanRecordBookHistoryResponse;
 import com.example.shelfkeeper.adapter.web.loanrecord.checkout.LoanRecordCheckOutRequest;
 import com.example.shelfkeeper.usecase.loanrecord.bookhistory.LoanRecordBookHistoryUseCase;
+import com.example.shelfkeeper.usecase.loanrecord.checkin.LoanRecordCheckInInputData;
+import com.example.shelfkeeper.usecase.loanrecord.checkin.LoanRecordCheckInUseCase;
 import com.example.shelfkeeper.usecase.loanrecord.checkout.LoanRecordCheckOutUseCase;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 
 /**
  * 貸出記録に関する API を提供するコントローラー。
@@ -35,13 +40,16 @@ public class LoanRecordController {
   private final LoanRecordBookHistoryPresenter loanRecordBookHistoryPresenter;
   /** 貸出記録登録ユースケース。 */
   private final LoanRecordCheckOutUseCase loanRecordCheckOutUseCase;
+  /** 貸出記録返却ユースケース。 */
+  private final LoanRecordCheckInUseCase loanRecordCheckInUseCase;
 
   public LoanRecordController(LoanRecordBookHistoryUseCase loanRecordBookHistoryUseCase,
       LoanRecordBookHistoryPresenter loanRecordBookHistoryPresenter,
-      LoanRecordCheckOutUseCase loanRecordCheckOutUseCase) {
+      LoanRecordCheckOutUseCase loanRecordCheckOutUseCase, LoanRecordCheckInUseCase loanRecordCheckInUseCase) {
     this.loanRecordBookHistoryUseCase = loanRecordBookHistoryUseCase;
     this.loanRecordBookHistoryPresenter = loanRecordBookHistoryPresenter;
     this.loanRecordCheckOutUseCase = loanRecordCheckOutUseCase;
+    this.loanRecordCheckInUseCase = loanRecordCheckInUseCase;
   }
 
   /**
@@ -66,5 +74,17 @@ public class LoanRecordController {
   public ResponseEntity<Void> checkOut(@RequestBody @Valid LoanRecordCheckOutRequest request) {
     loanRecordCheckOutUseCase.handle(request.toLoanRecordCheckOutInputData());
     return ResponseEntity.status(HttpStatus.CREATED).build();
+  }
+
+  /**
+   * 貸出記録を返却する。
+   *
+   * @param id 返却対象の貸出記録の識別子
+   * @return 返却成功時は 204 No Content
+   */
+  @PutMapping("/{id}")
+  public ResponseEntity<Void> checkIn(@PathVariable @Min(value = 1, message = "貸出記録IDは1以上で指定してください") Integer id) {
+    loanRecordCheckInUseCase.handle(new LoanRecordCheckInInputData(id));
+    return ResponseEntity.noContent().build();
   }
 }
