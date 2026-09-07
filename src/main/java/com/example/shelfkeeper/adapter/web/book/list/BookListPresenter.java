@@ -45,7 +45,7 @@ public class BookListPresenter implements BookListOutputBoundary {
     this.response = new BookListResponse(responseItemList);
   }
 
-  public BookListResponse getBookListResponse() {
+  public BookListResponse getResponse() {
     return response;
   }
 }

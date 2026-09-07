@@ -26,11 +26,15 @@ import com.example.shelfkeeper.adapter.web.book.BookController;
 import com.example.shelfkeeper.adapter.web.book.list.BookListItem;
 import com.example.shelfkeeper.adapter.web.book.list.BookListPresenter;
 import com.example.shelfkeeper.adapter.web.book.list.BookListResponse;
+import com.example.shelfkeeper.adapter.web.book.search.BookSearchItem;
+import com.example.shelfkeeper.adapter.web.book.search.BookSearchPresenter;
+import com.example.shelfkeeper.adapter.web.book.search.BookSearchResponse;
 import com.example.shelfkeeper.usecase.book.create.BookCreateInputData;
 import com.example.shelfkeeper.usecase.book.create.BookCreateUseCase;
 import com.example.shelfkeeper.usecase.book.delete.BookDeleteInputData;
 import com.example.shelfkeeper.usecase.book.delete.BookDeleteUseCase;
 import com.example.shelfkeeper.usecase.book.list.BookListUseCase;
+import com.example.shelfkeeper.usecase.book.search.BookSearchInputData;
 import com.example.shelfkeeper.usecase.book.search.BookSearchUseCase;
 
 /**
@@ -57,6 +61,9 @@ public class BookControllerTest {
 
   @MockitoBean
   private BookSearchUseCase bookSearchUseCase;
+
+  @MockitoBean
+  private BookSearchPresenter bookSearchPresenter;
 
   @Autowired
   public BookControllerTest(MockMvc mockMvc) {
@@ -125,7 +132,7 @@ public class BookControllerTest {
   @Test
   void listSuccess() throws Exception {
     BookListResponse response = new BookListResponse(List.of(new BookListItem(1, "test", "testName", "貸出可能")));
-    when(bookListPresenter.getBookListResponse()).thenReturn(response);
+    when(bookListPresenter.getResponse()).thenReturn(response);
 
     mockMvc.perform(get("/books"))
             .andExpect(status().isOk())
@@ -135,5 +142,27 @@ public class BookControllerTest {
             .andExpect(jsonPath("$.bookList[0].status").value("貸出可能"));
 
     verify(bookListUseCase).handle();
+  }
+
+  /**
+   * 蔵書検索に成功することを検証する。
+   */
+  @Test
+  void searchSuccess() throws Exception {
+    BookSearchResponse response = new BookSearchResponse(List.of(new BookSearchItem(1, "test", "testName", "貸出可能")));
+    when(bookSearchPresenter.getResponse()).thenReturn(response);
+
+    mockMvc.perform(get("/books/search")
+            .param("title", "test"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.searchBookList[0].bookId").value(1))
+        .andExpect(jsonPath("$.searchBookList[0].title").value("test"))
+        .andExpect(jsonPath("$.searchBookList[0].authorName").value("testName"))
+        .andExpect(jsonPath("$.searchBookList[0].status").value("貸出可能"));
+
+    ArgumentCaptor<BookSearchInputData> captor = ArgumentCaptor.forClass(BookSearchInputData.class);
+    verify(bookSearchUseCase).handle(captor.capture());
+
+    assertEquals("test", captor.getValue().getTitle());
   }
 }

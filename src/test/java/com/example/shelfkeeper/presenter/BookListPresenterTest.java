@@ -34,7 +34,7 @@ public class BookListPresenterTest {
 
     bookListPresenter.complete(outputData);
 
-    List<BookListItem> responseList = bookListPresenter.getBookListResponse().getBookList();
+    List<BookListItem> responseList = bookListPresenter.getResponse().getBookList();
 
     assertEquals(2, responseList.size());
 

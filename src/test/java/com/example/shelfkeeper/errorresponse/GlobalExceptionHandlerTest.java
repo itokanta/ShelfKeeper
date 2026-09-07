@@ -21,6 +21,7 @@ import com.example.shelfkeeper.adapter.web.adminuser.AdminUserController;
 import com.example.shelfkeeper.adapter.web.adminuser.findsingle.AdminUserFindSinglePresenter;
 import com.example.shelfkeeper.adapter.web.book.BookController;
 import com.example.shelfkeeper.adapter.web.book.list.BookListPresenter;
+import com.example.shelfkeeper.adapter.web.book.search.BookSearchPresenter;
 import com.example.shelfkeeper.adapter.web.errorresponse.BadRequestException;
 import com.example.shelfkeeper.adapter.web.errorresponse.GlobalExceptionHandler;
 import com.example.shelfkeeper.usecase.adminuser.create.AdminUserCreateUseCase;
@@ -72,6 +73,9 @@ public class GlobalExceptionHandlerTest {
 
   @MockitoBean
   private BookSearchUseCase bookSearchUseCase;
+
+  @MockitoBean
+  private BookSearchPresenter bookSearchPresenter;
 
   @Autowired
   public GlobalExceptionHandlerTest(MockMvc mockMvc) {
