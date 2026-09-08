@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -19,9 +20,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.example.shelfkeeper.adapter.web.user.UserController;
 import com.example.shelfkeeper.usecase.user.create.UserCreateInputData;
 import com.example.shelfkeeper.usecase.user.create.UserCreateUseCase;
+import com.example.shelfkeeper.usecase.user.delete.UserDeleteInputData;
+import com.example.shelfkeeper.usecase.user.delete.UserDeleteUseCase;
 
 /**
- * {@link UserController} の作成 API のテストクラス。
+ * {@link UserController} のテストクラス。
  *
  * @author itokanta
  */
@@ -32,6 +35,9 @@ public class UserCreateControllerTest {
 
   @MockitoBean
   private UserCreateUseCase userCreateUseCase;
+
+  @MockitoBean
+  private UserDeleteUseCase userDeleteUseCase;
 
   @Autowired
   public UserCreateControllerTest(MockMvc mockMvc) {
@@ -65,5 +71,30 @@ public class UserCreateControllerTest {
         .andExpect(status().isBadRequest());
 
     verify(userCreateUseCase, never()).handle(any());
+  }
+
+  /**
+   * 利用者の削除に成功することを検証する。
+   */
+  @Test
+  void deleteSuccess() throws Exception {
+    mockMvc.perform(delete("/users/1"))
+        .andExpect(status().isNoContent());
+
+    ArgumentCaptor<UserDeleteInputData> captor = ArgumentCaptor.forClass(UserDeleteInputData.class);
+    verify(userDeleteUseCase).handle(captor.capture());
+
+    assertEquals(1, captor.getValue().getId());
+  }
+
+  /**
+   * ユーザーIDのバリデーションエラーの場合、削除ユースケースを呼び出さないことを検証する。
+   */
+  @Test
+  void deleteValidationError() throws Exception {
+    mockMvc.perform(delete("/users/0"))
+        .andExpect(status().isBadRequest());
+
+    verify(userDeleteUseCase, never()).handle(any());
   }
 }

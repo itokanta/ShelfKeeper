@@ -3,6 +3,8 @@ package com.example.shelfkeeper.adapter.web.user;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,8 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.shelfkeeper.adapter.web.user.create.UserCreateRequest;
 import com.example.shelfkeeper.usecase.user.create.UserCreateUseCase;
+import com.example.shelfkeeper.usecase.user.delete.UserDeleteInputData;
+import com.example.shelfkeeper.usecase.user.delete.UserDeleteUseCase;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 
 /**
  * 利用者に関する API を提供するコントローラー。
@@ -25,9 +30,12 @@ import jakarta.validation.Valid;
 public class UserController {
   /** 利用者作成ユースケース。 */
   private final UserCreateUseCase userCreateUseCase;
+  /** 利用者削除ユースケース。 */
+  private final UserDeleteUseCase userDeleteUseCase;
 
-  public UserController(UserCreateUseCase userCreateUseCase) {
+  public UserController(UserCreateUseCase userCreateUseCase, UserDeleteUseCase userDeleteUseCase) {
     this.userCreateUseCase = userCreateUseCase;
+    this.userDeleteUseCase = userDeleteUseCase;
   }
 
   /**
@@ -40,5 +48,17 @@ public class UserController {
   public ResponseEntity<Void> create(@RequestBody @Valid UserCreateRequest request) {
     userCreateUseCase.handle(request.toUserCreateInputData());
     return ResponseEntity.status(HttpStatus.CREATED).build();
+  }
+
+  /**
+   * 利用者を削除する。
+   *
+   * @param id 削除対象の利用者の識別子
+   * @return 削除成功時は 204 No Content
+   */
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(@PathVariable @Min(value = 1, message = "ユーザーIDは1以上を指定してください") Integer id) {
+    userDeleteUseCase.handle(new UserDeleteInputData(id));
+    return ResponseEntity.noContent().build();
   }
 }
