@@ -15,10 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.shelfkeeper.adapter.web.user.create.UserCreateRequest;
 import com.example.shelfkeeper.adapter.web.user.list.UserListPresenter;
 import com.example.shelfkeeper.adapter.web.user.list.UserListResponse;
+import com.example.shelfkeeper.adapter.web.user.overduelist.UserOverDueListPresenter;
+import com.example.shelfkeeper.adapter.web.user.overduelist.UserOverDueListResponse;
 import com.example.shelfkeeper.usecase.user.create.UserCreateUseCase;
 import com.example.shelfkeeper.usecase.user.delete.UserDeleteInputData;
 import com.example.shelfkeeper.usecase.user.delete.UserDeleteUseCase;
 import com.example.shelfkeeper.usecase.user.list.UserListUseCase;
+import com.example.shelfkeeper.usecase.user.overduelist.UserOverDueListUseCase;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -40,13 +43,20 @@ public class UserController {
   private final UserListUseCase userListUseCase;
   /** 利用者一覧取得のプレゼンター。 */
   private final UserListPresenter userListPresenter;
+  /** 延滞利用者一覧取得ユースケース。 */
+  private final UserOverDueListUseCase userOverDueListUseCase;
+  /** 延滞利用者一覧取得のプレゼンター。 */
+  private final UserOverDueListPresenter userOverDueListPresenter;
 
   public UserController(UserCreateUseCase userCreateUseCase, UserDeleteUseCase userDeleteUseCase,
-      UserListUseCase userListUseCase, UserListPresenter userListPresenter) {
+      UserListUseCase userListUseCase, UserListPresenter userListPresenter,
+      UserOverDueListUseCase userOverDueListUseCase, UserOverDueListPresenter userOverDueListPresenter) {
     this.userCreateUseCase = userCreateUseCase;
     this.userDeleteUseCase = userDeleteUseCase;
     this.userListUseCase = userListUseCase;
     this.userListPresenter = userListPresenter;
+    this.userOverDueListUseCase = userOverDueListUseCase;
+    this.userOverDueListPresenter = userOverDueListPresenter;
   }
 
   /**
@@ -82,5 +92,16 @@ public class UserController {
   public ResponseEntity<UserListResponse> list() {
     userListUseCase.handle();
     return ResponseEntity.ok(userListPresenter.getResponse());
+  }
+
+  /**
+   * 延滞利用者一覧を取得する。
+   *
+   * @return 延滞利用者一覧
+   */
+  @GetMapping("/overduelist")
+  public ResponseEntity<UserOverDueListResponse> overDueList() {
+    userOverDueListUseCase.handle();
+    return ResponseEntity.ok(userOverDueListPresenter.getResponse());
   }
 }

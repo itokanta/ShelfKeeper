@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -26,11 +27,16 @@ import com.example.shelfkeeper.adapter.web.user.UserController;
 import com.example.shelfkeeper.adapter.web.user.list.UserListItem;
 import com.example.shelfkeeper.adapter.web.user.list.UserListPresenter;
 import com.example.shelfkeeper.adapter.web.user.list.UserListResponse;
+import com.example.shelfkeeper.adapter.web.user.overduelist.DueBookListItem;
+import com.example.shelfkeeper.adapter.web.user.overduelist.UserOverDueListItem;
+import com.example.shelfkeeper.adapter.web.user.overduelist.UserOverDueListPresenter;
+import com.example.shelfkeeper.adapter.web.user.overduelist.UserOverDueListResponse;
 import com.example.shelfkeeper.usecase.user.create.UserCreateInputData;
 import com.example.shelfkeeper.usecase.user.create.UserCreateUseCase;
 import com.example.shelfkeeper.usecase.user.delete.UserDeleteInputData;
 import com.example.shelfkeeper.usecase.user.delete.UserDeleteUseCase;
 import com.example.shelfkeeper.usecase.user.list.UserListUseCase;
+import com.example.shelfkeeper.usecase.user.overduelist.UserOverDueListUseCase;
 
 /**
  * {@link UserController} のテストクラス。
@@ -53,6 +59,12 @@ public class UserControllerTest {
 
   @MockitoBean
   private UserListPresenter userListPresenter;
+
+  @MockitoBean
+  private UserOverDueListUseCase userOverDueListUseCase;
+
+  @MockitoBean
+  private UserOverDueListPresenter userOverDueListPresenter;
 
   @Autowired
   public UserControllerTest(MockMvc mockMvc) {
@@ -127,5 +139,32 @@ public class UserControllerTest {
         .andExpect(jsonPath("$.userList[0].name").value("test"));
 
     verify(userListUseCase).handle();
+  }
+
+  /**
+   * 延滞利用者一覧の取得に成功することを検証する。
+   */
+  @Test
+  void overDueListSuccess() throws Exception {
+    List<DueBookListItem> dueBookList = List.of(new DueBookListItem(
+      1,
+      "testTitle",
+      LocalDate.of(2026, 8, 25),
+      LocalDate.of(2026, 8, 29)
+    ));
+    UserOverDueListResponse response = new UserOverDueListResponse(List.of(new UserOverDueListItem(2, "testName", dueBookList)));
+
+    when(userOverDueListPresenter.getResponse()).thenReturn(response);
+
+    mockMvc.perform(get("/users/overduelist"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.userOverDueList[0].userId").value(2))
+        .andExpect(jsonPath("$.userOverDueList[0].userName").value("testName"))
+        .andExpect(jsonPath("$.userOverDueList[0].dueBookList[0].bookId").value(1))
+        .andExpect(jsonPath("$.userOverDueList[0].dueBookList[0].bookTitle").value("testTitle"))
+        .andExpect(jsonPath("$.userOverDueList[0].dueBookList[0].loanDate").value("2026-08-25"))
+        .andExpect(jsonPath("$.userOverDueList[0].dueBookList[0].dueDate").value("2026-08-29"));
+
+    verify(userOverDueListUseCase).handle();
   }
 }
