@@ -1,0 +1,69 @@
+package com.example.shelfkeeper.controller;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.example.shelfkeeper.adapter.web.user.UserController;
+import com.example.shelfkeeper.usecase.user.create.UserCreateInputData;
+import com.example.shelfkeeper.usecase.user.create.UserCreateUseCase;
+
+/**
+ * {@link UserController} の作成 API のテストクラス。
+ *
+ * @author itokanta
+ */
+@WebMvcTest(UserController.class)
+@AutoConfigureMockMvc(addFilters = false)
+public class UserCreateControllerTest {
+  private final MockMvc mockMvc;
+
+  @MockitoBean
+  private UserCreateUseCase userCreateUseCase;
+
+  @Autowired
+  public UserCreateControllerTest(MockMvc mockMvc) {
+    this.mockMvc = mockMvc;
+  }
+
+  /**
+   * 利用者の作成に成功することを検証する。
+   */
+  @Test
+  void createSuccess() throws Exception {
+    mockMvc.perform(post("/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"name\":\"test\"}"))
+        .andExpect(status().isCreated());
+
+    ArgumentCaptor<UserCreateInputData> captor = ArgumentCaptor.forClass(UserCreateInputData.class);
+    verify(userCreateUseCase).handle(captor.capture());
+
+    assertEquals("test", captor.getValue().getName());
+  }
+
+  /**
+   * 名前のバリデーションエラーの場合、作成ユースケースを呼び出さないことを検証する。
+   */
+  @Test
+  void createValidationError() throws Exception {
+    mockMvc.perform(post("/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"name\":\"\"}"))
+        .andExpect(status().isBadRequest());
+
+    verify(userCreateUseCase, never()).handle(any());
+  }
+}
