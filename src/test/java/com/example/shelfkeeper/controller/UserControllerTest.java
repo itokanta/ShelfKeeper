@@ -39,7 +39,7 @@ import com.example.shelfkeeper.usecase.user.list.UserListUseCase;
  */
 @WebMvcTest(UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class UserCreateControllerTest {
+public class UserControllerTest {
   private final MockMvc mockMvc;
 
   @MockitoBean
@@ -55,7 +55,7 @@ public class UserCreateControllerTest {
   private UserListPresenter userListPresenter;
 
   @Autowired
-  public UserCreateControllerTest(MockMvc mockMvc) {
+  public UserControllerTest(MockMvc mockMvc) {
     this.mockMvc = mockMvc;
   }
 
