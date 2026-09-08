@@ -4,9 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -18,10 +23,14 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.shelfkeeper.adapter.web.user.UserController;
+import com.example.shelfkeeper.adapter.web.user.list.UserListItem;
+import com.example.shelfkeeper.adapter.web.user.list.UserListPresenter;
+import com.example.shelfkeeper.adapter.web.user.list.UserListResponse;
 import com.example.shelfkeeper.usecase.user.create.UserCreateInputData;
 import com.example.shelfkeeper.usecase.user.create.UserCreateUseCase;
 import com.example.shelfkeeper.usecase.user.delete.UserDeleteInputData;
 import com.example.shelfkeeper.usecase.user.delete.UserDeleteUseCase;
+import com.example.shelfkeeper.usecase.user.list.UserListUseCase;
 
 /**
  * {@link UserController} のテストクラス。
@@ -38,6 +47,12 @@ public class UserCreateControllerTest {
 
   @MockitoBean
   private UserDeleteUseCase userDeleteUseCase;
+
+  @MockitoBean
+  private UserListUseCase userListUseCase;
+
+  @MockitoBean
+  private UserListPresenter userListPresenter;
 
   @Autowired
   public UserCreateControllerTest(MockMvc mockMvc) {
@@ -96,5 +111,21 @@ public class UserCreateControllerTest {
         .andExpect(status().isBadRequest());
 
     verify(userDeleteUseCase, never()).handle(any());
+  }
+
+  /**
+   * 利用者一覧の取得に成功することを検証する。
+   */
+  @Test
+  void listSuccess() throws Exception {
+    UserListResponse response = new UserListResponse(List.of(new UserListItem(1, "test")));
+    when(userListPresenter.getResponse()).thenReturn(response);
+
+    mockMvc.perform(get("/users"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.userList[0].id").value(1))
+        .andExpect(jsonPath("$.userList[0].name").value("test"));
+
+    verify(userListUseCase).handle();
   }
 }
