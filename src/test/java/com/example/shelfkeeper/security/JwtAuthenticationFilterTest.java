@@ -25,7 +25,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 import com.example.shelfkeeper.domain.adminuser.AdminUser;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import tools.jackson.databind.json.JsonMapper;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -47,7 +48,7 @@ public class JwtAuthenticationFilterTest {
 
   @BeforeEach
   void setUp() {
-    filter = new JwtAuthenticationFilter(authenticationManager, jwtService, new ObjectMapper());
+    filter = new JwtAuthenticationFilter(authenticationManager, jwtService, new JsonMapper());
   }
 
   /**

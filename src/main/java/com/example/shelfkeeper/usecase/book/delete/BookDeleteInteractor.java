@@ -2,6 +2,8 @@ package com.example.shelfkeeper.usecase.book.delete;
 
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
 import com.example.shelfkeeper.adapter.web.errorresponse.BadRequestException;
 import com.example.shelfkeeper.domain.book.Book;
 import com.example.shelfkeeper.usecase.port.BookRepository;
@@ -12,6 +14,7 @@ import com.example.shelfkeeper.usecase.port.BookRepository;
  *
  * @author itokanta
  */
+@Service
 public class BookDeleteInteractor implements BookDeleteUseCase{
   /** 蔵書の永続化を担うリポジトリ。 */
   private final BookRepository bookRepository;

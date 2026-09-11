@@ -16,7 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Spring Security の設定。
@@ -60,7 +60,7 @@ public class SecurityConfig {
    * @param http HTTP セキュリティ設定
    * @param authenticationManager 認証マネージャー
    * @param jwtService JWT サービス
-   * @param objectMapper JSON マッパー
+   * @param jsonMapper JSON マッパー
    * @return セキュリティフィルターチェーン
    */
   @Bean
@@ -68,8 +68,8 @@ public class SecurityConfig {
       HttpSecurity http,
       AuthenticationManager authenticationManager,
       JwtService jwtService,
-      ObjectMapper objectMapper) throws Exception {
-    JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtService, objectMapper);
+      JsonMapper jsonMapper) throws Exception {
+    JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtService, jsonMapper);
     JwtAuthorizationFilter jwtAuthorizationFilter = new JwtAuthorizationFilter(jwtService);
 
     http

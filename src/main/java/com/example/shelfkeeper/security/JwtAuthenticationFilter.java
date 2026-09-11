@@ -11,7 +11,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -28,14 +28,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
   /** JWT の発行・検証を担うサービス。 */
   private final JwtService jwtService;
   /** リクエストボディの JSON 変換に用いるマッパー。 */
-  private final ObjectMapper objectMapper;
+  private final JsonMapper jsonMapper;
 
   public JwtAuthenticationFilter(
       AuthenticationManager authenticationManager,
       JwtService jwtService,
-      ObjectMapper objectMapper) {
+      JsonMapper jsonMapper) {
     this.jwtService = jwtService;
-    this.objectMapper = objectMapper;
+    this.jsonMapper = jsonMapper;
     setAuthenticationManager(authenticationManager);
     setRequiresAuthenticationRequestMatcher(PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST,"/login"));
     setAuthenticationFailureHandler((request, response, exception) -> {
@@ -58,7 +58,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
   public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
       throws AuthenticationException {
     try {
-      LoginRequest loginRequest = objectMapper.readValue(request.getInputStream(), LoginRequest.class);
+      LoginRequest loginRequest = jsonMapper.readValue(request.getInputStream(), LoginRequest.class);
       UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(loginRequest.getMail(), loginRequest.getPass());
       return getAuthenticationManager().authenticate(authRequest);
     } catch (IOException e) {
