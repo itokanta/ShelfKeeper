@@ -43,13 +43,6 @@ public interface BookRepository {
   void bookCreate(Book book);
 
   /**
-   * 蔵書を更新する。
-   *
-   * @param book 更新する蔵書
-   */
-  void bookUpdate(Book book);
-
-  /**
    * 蔵書を削除する。
    *
    * @param id 削除する書籍の識別子
