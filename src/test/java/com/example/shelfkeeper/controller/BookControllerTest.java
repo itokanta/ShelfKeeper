@@ -76,9 +76,9 @@ public class BookControllerTest {
   @Test
   void createSuccess() throws Exception {
     mockMvc.perform(post("/books")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"title\":\"test\",\"authorName\":\"testName\"}"))
-            .andExpect(status().isCreated());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"title\":\"test\",\"authorName\":\"testName\"}"))
+        .andExpect(status().isCreated());
 
     ArgumentCaptor<BookCreateInputData> captor = ArgumentCaptor.forClass(BookCreateInputData.class);
     verify(bookCreateUseCase).handle(captor.capture());
@@ -94,9 +94,9 @@ public class BookControllerTest {
   @Test
   void createValidationError() throws Exception {
     mockMvc.perform(post("/books")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"title\":\"\",\"authorName\":\"\"}"))
-            .andExpect(status().isBadRequest());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"title\":\"\",\"authorName\":\"\"}"))
+        .andExpect(status().isBadRequest());
 
     verify(bookCreateUseCase, never()).handle(any());
   }
@@ -107,7 +107,7 @@ public class BookControllerTest {
   @Test
   void deleteSuccess() throws Exception {
     mockMvc.perform(delete("/books/1"))
-            .andExpect(status().isNoContent());
+        .andExpect(status().isNoContent());
 
     ArgumentCaptor<BookDeleteInputData> captor = ArgumentCaptor.forClass(BookDeleteInputData.class);
     verify(bookDeleteUseCase).handle(captor.capture());
@@ -121,7 +121,7 @@ public class BookControllerTest {
   @Test
   void deleteValidationError() throws Exception {
     mockMvc.perform(delete("/books/0"))
-            .andExpect(status().isBadRequest());
+        .andExpect(status().isBadRequest());
 
     verify(bookDeleteUseCase, never()).handle(any());
   }
@@ -135,11 +135,11 @@ public class BookControllerTest {
     when(bookListPresenter.getResponse()).thenReturn(response);
 
     mockMvc.perform(get("/books"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.bookList[0].bookId").value(1))
-            .andExpect(jsonPath("$.bookList[0].title").value("test"))
-            .andExpect(jsonPath("$.bookList[0].authorName").value("testName"))
-            .andExpect(jsonPath("$.bookList[0].status").value("貸出可能"));
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.bookList[0].bookId").value(1))
+        .andExpect(jsonPath("$.bookList[0].title").value("test"))
+        .andExpect(jsonPath("$.bookList[0].authorName").value("testName"))
+        .andExpect(jsonPath("$.bookList[0].status").value("貸出可能"));
 
     verify(bookListUseCase).handle();
   }
@@ -153,7 +153,7 @@ public class BookControllerTest {
     when(bookSearchPresenter.getResponse()).thenReturn(response);
 
     mockMvc.perform(get("/books/search")
-            .param("title", "test"))
+        .param("title", "test"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.searchBookList[0].bookId").value(1))
         .andExpect(jsonPath("$.searchBookList[0].title").value("test"))

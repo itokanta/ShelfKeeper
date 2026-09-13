@@ -38,7 +38,7 @@ import com.example.shelfkeeper.usecase.book.search.BookSearchUseCase;
  *
  * @author itokanta
  */
-@WebMvcTest(controllers = {AdminUserController.class, BookController.class})
+@WebMvcTest(controllers = { AdminUserController.class, BookController.class })
 @AutoConfigureMockMvc(addFilters = false)
 public class GlobalExceptionHandlerTest {
 
@@ -88,13 +88,13 @@ public class GlobalExceptionHandlerTest {
   @Test
   void handleValidationError() throws Exception {
     mockMvc.perform(post("/adminusers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"name\":\"\",\"mail\":\"test\",\"pass\":\"testTest\"}"))
-          .andExpect(status().isBadRequest())
-          .andExpect(jsonPath("$.status").value(400))
-          .andExpect(jsonPath("$.message").value("バリデーションエラー"))
-          .andExpect(jsonPath("$.details.name").value("名前は必須です"))
-          .andExpect(jsonPath("$.details.mail").value("メールアドレスとして不正な形式です"));
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"name\":\"\",\"mail\":\"test\",\"pass\":\"testTest\"}"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.status").value(400))
+        .andExpect(jsonPath("$.message").value("バリデーションエラー"))
+        .andExpect(jsonPath("$.details.name").value("名前は必須です"))
+        .andExpect(jsonPath("$.details.mail").value("メールアドレスとして不正な形式です"));
     verify(adminUserCreateUseCase, never()).handle(any());
   }
 
@@ -104,10 +104,10 @@ public class GlobalExceptionHandlerTest {
   @Test
   void handleHandlerMethodValidationError() throws Exception {
     mockMvc.perform(delete("/books/0"))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value("バリデーションエラー"))
-            .andExpect(jsonPath("$.details.id").value("書籍IDは1以上で指定してください"));
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.status").value(400))
+        .andExpect(jsonPath("$.message").value("バリデーションエラー"))
+        .andExpect(jsonPath("$.details.id").value("書籍IDは1以上で指定してください"));
     verify(bookDeleteUseCase, never()).handle(any());
   }
 
@@ -119,12 +119,12 @@ public class GlobalExceptionHandlerTest {
     doThrow(new BadRequestException("入力されたメールアドレスはすでに登録されています")).when(adminUserCreateUseCase).handle(any());
 
     mockMvc.perform(post("/adminusers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"name\":\"test\",\"mail\":\"test@test.com\",\"pass\":\"testTest\"}"))
-          .andExpect(status().isBadRequest())
-          .andExpect(jsonPath("$.status").value(400))
-          .andExpect(jsonPath("$.message").value("入力されたメールアドレスはすでに登録されています"))
-          .andExpect(jsonPath("$.details").doesNotExist());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"name\":\"test\",\"mail\":\"test@test.com\",\"pass\":\"testTest\"}"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.status").value(400))
+        .andExpect(jsonPath("$.message").value("入力されたメールアドレスはすでに登録されています"))
+        .andExpect(jsonPath("$.details").doesNotExist());
   }
 
   /**
@@ -135,12 +135,12 @@ public class GlobalExceptionHandlerTest {
     doThrow(new RuntimeException("予期しないエラー")).when(adminUserCreateUseCase).handle(any());
 
     mockMvc.perform(post("/adminusers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"name\":\"test\",\"mail\":\"test@test.com\",\"pass\":\"testTest\"}"))
-          .andExpect(status().isInternalServerError())
-          .andExpect(jsonPath("$.status").value(500))
-          .andExpect(jsonPath("$.message").value("サーバーエラーが発生しました"))
-          .andExpect(jsonPath("$.details").doesNotExist());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"name\":\"test\",\"mail\":\"test@test.com\",\"pass\":\"testTest\"}"))
+        .andExpect(status().isInternalServerError())
+        .andExpect(jsonPath("$.status").value(500))
+        .andExpect(jsonPath("$.message").value("サーバーエラーが発生しました"))
+        .andExpect(jsonPath("$.details").doesNotExist());
   }
 
   /**
@@ -149,9 +149,9 @@ public class GlobalExceptionHandlerTest {
   @Test
   void noErrorValid() throws Exception {
     mockMvc.perform(post("/adminusers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"name\":\"test\",\"mail\":\"test@test.com\",\"pass\":\"testTest\"}"))
-          .andExpect(status().isCreated());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"name\":\"test\",\"mail\":\"test@test.com\",\"pass\":\"testTest\"}"))
+        .andExpect(status().isCreated());
     verify(adminUserCreateUseCase).handle(any());
   }
 }

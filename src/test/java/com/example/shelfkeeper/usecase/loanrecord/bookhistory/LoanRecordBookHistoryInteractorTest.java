@@ -42,21 +42,24 @@ public class LoanRecordBookHistoryInteractorTest {
   void handleSuccess() {
     LoanRecordBookHistoryInputData targetBookId = new LoanRecordBookHistoryInputData(1);
     List<BookHistory> findByBookIdResult = new ArrayList<>();
-    findByBookIdResult.add(new BookHistory(1, "test1", "bookName", LocalDate.of(2026, 8, 21), LocalDate.of(2026, 8, 26), null));
-    findByBookIdResult.add(new BookHistory(2, "test2", "bookName", LocalDate.of(2026, 8, 15), LocalDate.of(2026, 8, 21), LocalDate.of(2026, 8, 20)));
+    findByBookIdResult
+        .add(new BookHistory(1, "test1", "bookName", LocalDate.of(2026, 8, 21), LocalDate.of(2026, 8, 26), null));
+    findByBookIdResult.add(new BookHistory(2, "test2", "bookName", LocalDate.of(2026, 8, 15), LocalDate.of(2026, 8, 21),
+        LocalDate.of(2026, 8, 20)));
 
     when(loanRecordRepository.findByBookId(targetBookId.getBookId())).thenReturn(findByBookIdResult);
 
     loanRecordBookHistoryInteractor.handle(targetBookId);
 
     verify(loanRecordRepository).findByBookId(targetBookId.getBookId());
-    ArgumentCaptor<LoanRecordBookHistoryOutputData> captor = ArgumentCaptor.forClass(LoanRecordBookHistoryOutputData.class);
+    ArgumentCaptor<LoanRecordBookHistoryOutputData> captor = ArgumentCaptor
+        .forClass(LoanRecordBookHistoryOutputData.class);
     verify(loanRecordBookHistoryBoundary).complete(captor.capture());
 
     LoanRecordBookHistoryOutputData outputData = captor.getValue();
     List<LoanRecordBookHistoryItemOutputData> itemList = outputData.getOutputData();
     assertEquals(2, itemList.size());
-    for(int i = 0; i < itemList.size(); i++) {
+    for (int i = 0; i < itemList.size(); i++) {
       BookHistory bookHistory = findByBookIdResult.get(i);
       LoanRecordBookHistoryItemOutputData item = itemList.get(i);
       assertEquals(bookHistory.getLoanRecordId(), item.getLoanRecordId());

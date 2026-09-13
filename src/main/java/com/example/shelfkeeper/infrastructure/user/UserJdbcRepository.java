@@ -47,7 +47,7 @@ public class UserJdbcRepository implements UserRepository {
           rs.getObject("loan_date", LocalDate.class),
           rs.getObject("due_date", LocalDate.class));
 
-      if(resultMap.containsKey(userId)) {
+      if (resultMap.containsKey(userId)) {
         resultMap.get(userId).getDueBookList().add(userOverDueBook);
         continue;
       }
@@ -56,9 +56,9 @@ public class UserJdbcRepository implements UserRepository {
       userOverDueBookList.add(userOverDueBook);
 
       UserOverDue userOverDue = new UserOverDue(
-        userId,
-        rs.getString("user_name"),
-        userOverDueBookList);
+          userId,
+          rs.getString("user_name"),
+          userOverDueBookList);
 
       resultMap.put(userId, userOverDue);
     }
@@ -103,17 +103,17 @@ public class UserJdbcRepository implements UserRepository {
   @Override
   public List<UserOverDue> findOverDueUser() {
     String sql = "SELECT "
-              + "u.id AS user_id, "
-              + "u.name AS user_name, "
-              + "b.id AS book_id, "
-              + "b.title AS book_title, "
-              + "l.loan_date AS loan_date, "
-              + "l.due_date AS due_date "
-              + "FROM users u "
-              + "JOIN loan_records l ON u.id = l.user_id "
-              + "JOIN books b ON l.book_id = b.id "
-              + "WHERE l.return_date IS NULL AND l.due_date < CURRENT_DATE "
-              + "ORDER BY l.due_date, l.id;";
+        + "u.id AS user_id, "
+        + "u.name AS user_name, "
+        + "b.id AS book_id, "
+        + "b.title AS book_title, "
+        + "l.loan_date AS loan_date, "
+        + "l.due_date AS due_date "
+        + "FROM users u "
+        + "JOIN loan_records l ON u.id = l.user_id "
+        + "JOIN books b ON l.book_id = b.id "
+        + "WHERE l.return_date IS NULL AND l.due_date < CURRENT_DATE "
+        + "ORDER BY l.due_date, l.id;";
     return template.query(sql, USER_OVER_DUE_EXTRACTOR);
   }
 
@@ -150,8 +150,8 @@ public class UserJdbcRepository implements UserRepository {
   public void userUpdate(User user) {
     String sql = "UPDATE users SET name = :name WHERE id = :id;";
     SqlParameterSource param = new MapSqlParameterSource()
-              .addValue("name", user.getName())
-              .addValue("id", user.getId());
+        .addValue("name", user.getName())
+        .addValue("id", user.getId());
 
     template.update(sql, param);
   }

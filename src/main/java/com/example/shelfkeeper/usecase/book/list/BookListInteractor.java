@@ -15,7 +15,7 @@ import com.example.shelfkeeper.usecase.port.entity.book.BookStatus;
  * @author itokanta
  */
 @Service
-public class BookListInteractor implements BookListUseCase{
+public class BookListInteractor implements BookListUseCase {
   /** 蔵書の永続化を担うリポジトリ。 */
   private final BookRepository bookRepository;
   /** 取得結果を後続処理へ引き渡す出力境界。 */
@@ -34,13 +34,12 @@ public class BookListInteractor implements BookListUseCase{
     List<BookStatus> findAllResult = bookRepository.findAll();
     List<BookListItemOutputData> outputDataList = new ArrayList<>();
 
-    for(BookStatus bookStatus : findAllResult) {
+    for (BookStatus bookStatus : findAllResult) {
       outputDataList.add(new BookListItemOutputData(
-        bookStatus.getId(),
-        bookStatus.getTitle(),
-        bookStatus.getAuthorName(),
-        bookStatus.getStatus()
-      ));
+          bookStatus.getId(),
+          bookStatus.getTitle(),
+          bookStatus.getAuthorName(),
+          bookStatus.getStatus()));
     }
 
     bookListOutputBoundary.complete(new BookListOutputData(outputDataList));

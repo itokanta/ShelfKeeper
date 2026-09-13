@@ -27,7 +27,7 @@ import tools.jackson.databind.json.JsonMapper;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-  
+
   /**
    * パスワードエンコーダーを提供する。
    *
@@ -42,7 +42,7 @@ public class SecurityConfig {
    * 認証マネージャーを提供する。
    *
    * @param userDetailsService ユーザー情報取得サービス
-   * @param passwordEncoder パスワードエンコーダー
+   * @param passwordEncoder    パスワードエンコーダー
    * @return 認証マネージャー
    */
   @Bean
@@ -57,10 +57,10 @@ public class SecurityConfig {
   /**
    * セキュリティフィルターチェーンを構成する。
    *
-   * @param http HTTP セキュリティ設定
+   * @param http                  HTTP セキュリティ設定
    * @param authenticationManager 認証マネージャー
-   * @param jwtService JWT サービス
-   * @param jsonMapper JSON マッパー
+   * @param jwtService            JWT サービス
+   * @param jsonMapper            JSON マッパー
    * @return セキュリティフィルターチェーン
    */
   @Bean
@@ -69,7 +69,8 @@ public class SecurityConfig {
       AuthenticationManager authenticationManager,
       JwtService jwtService,
       JsonMapper jsonMapper) throws Exception {
-    JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtService, jsonMapper);
+    JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtService,
+        jsonMapper);
     JwtAuthorizationFilter jwtAuthorizationFilter = new JwtAuthorizationFilter(jwtService);
 
     http

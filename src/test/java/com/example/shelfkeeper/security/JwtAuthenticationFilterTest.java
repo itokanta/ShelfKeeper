@@ -40,7 +40,7 @@ public class JwtAuthenticationFilterTest {
 
   @Mock
   private AuthenticationManager authenticationManager;
-  
+
   @Mock
   private JwtService jwtService;
 
@@ -58,7 +58,7 @@ public class JwtAuthenticationFilterTest {
   void returnsTokenWhenLoginSucceeds() throws Exception {
     LoginUser loginUser = new LoginUser(new AdminUser(1, "test", "test@test", "testPassHashed"));
     Authentication success = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
-    
+
     when(authenticationManager.authenticate(any())).thenReturn(success);
     when(jwtService.createToken(loginUser)).thenReturn("issued.jwt.token");
 

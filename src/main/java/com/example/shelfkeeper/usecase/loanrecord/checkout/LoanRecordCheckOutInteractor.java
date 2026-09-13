@@ -19,7 +19,7 @@ import com.example.shelfkeeper.usecase.port.UserRepository;
  * @author itokanta
  */
 @Service
-public class LoanRecordCheckOutInteractor implements LoanRecordCheckOutUseCase{
+public class LoanRecordCheckOutInteractor implements LoanRecordCheckOutUseCase {
   /** 貸出記録の永続化を担うリポジトリ。 */
   private final LoanRecordRepository loanRecordRepository;
   /** 蔵書の永続化を担うリポジトリ。 */
@@ -27,7 +27,8 @@ public class LoanRecordCheckOutInteractor implements LoanRecordCheckOutUseCase{
   /** 利用者の永続化を担うリポジトリ。 */
   private final UserRepository userRepository;
 
-  public LoanRecordCheckOutInteractor(LoanRecordRepository loanRecordRepository, BookRepository bookRepository, UserRepository userRepository) {
+  public LoanRecordCheckOutInteractor(LoanRecordRepository loanRecordRepository, BookRepository bookRepository,
+      UserRepository userRepository) {
     this.loanRecordRepository = loanRecordRepository;
     this.bookRepository = bookRepository;
     this.userRepository = userRepository;
@@ -42,23 +43,25 @@ public class LoanRecordCheckOutInteractor implements LoanRecordCheckOutUseCase{
    */
   @Override
   public void handle(LoanRecordCheckOutInputData loanRecordCheckOutInputData) {
-    Optional<LoanRecord> loanedCheck = loanRecordRepository.returnDateIsNullFindByBookId(loanRecordCheckOutInputData.getBookId());
+    Optional<LoanRecord> loanedCheck = loanRecordRepository
+        .returnDateIsNullFindByBookId(loanRecordCheckOutInputData.getBookId());
     Optional<User> findByUserIdResult = userRepository.findById(loanRecordCheckOutInputData.getUserId());
     Optional<Book> findByBookIdResult = bookRepository.findById(loanRecordCheckOutInputData.getBookId());
-    
-    if(!loanedCheck.isEmpty()) {
+
+    if (!loanedCheck.isEmpty()) {
       throw new BadRequestException("該当の書籍はすでに貸出中です");
     }
 
-    if(findByUserIdResult.isEmpty()) {
+    if (findByUserIdResult.isEmpty()) {
       throw new BadRequestException("指定されたユーザーは登録されていません");
     }
 
-    if(findByBookIdResult.isEmpty()) {
+    if (findByBookIdResult.isEmpty()) {
       throw new BadRequestException("指定された書籍は登録されていません");
     }
 
-    LoanRecord loan = LoanRecord.checkOut(loanRecordCheckOutInputData.getUserId(), loanRecordCheckOutInputData.getBookId());
+    LoanRecord loan = LoanRecord.checkOut(loanRecordCheckOutInputData.getUserId(),
+        loanRecordCheckOutInputData.getBookId());
 
     loanRecordRepository.checkOut(loan);
   }

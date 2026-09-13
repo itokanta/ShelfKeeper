@@ -37,7 +37,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     this.jwtService = jwtService;
     this.jsonMapper = jsonMapper;
     setAuthenticationManager(authenticationManager);
-    setRequiresAuthenticationRequestMatcher(PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST,"/login"));
+    setRequiresAuthenticationRequestMatcher(
+        PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, "/login"));
     setAuthenticationFailureHandler((request, response, exception) -> {
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -49,7 +50,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
   /**
    * リクエストボディから認証情報を読み取り、認証を試みる。
    *
-   * @param request HTTP リクエスト
+   * @param request  HTTP リクエスト
    * @param response HTTP レスポンス
    * @return 認証結果
    * @throws AuthenticationException 認証に失敗した場合
@@ -59,7 +60,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
       throws AuthenticationException {
     try {
       LoginRequest loginRequest = jsonMapper.readValue(request.getInputStream(), LoginRequest.class);
-      UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(loginRequest.getMail(), loginRequest.getPass());
+      UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(loginRequest.getMail(),
+          loginRequest.getPass());
       return getAuthenticationManager().authenticate(authRequest);
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -69,9 +71,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
   /**
    * 認証成功時に JWT をレスポンスへ返す。
    *
-   * @param request HTTP リクエスト
-   * @param response HTTP レスポンス
-   * @param chain フィルターチェーン
+   * @param request    HTTP リクエスト
+   * @param response   HTTP レスポンス
+   * @param chain      フィルターチェーン
    * @param authResult 認証結果
    */
   @Override

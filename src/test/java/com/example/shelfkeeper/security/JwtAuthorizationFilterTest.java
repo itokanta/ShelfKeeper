@@ -57,7 +57,7 @@ public class JwtAuthorizationFilterTest {
    */
   @Test
   void skipsLogin() throws Exception {
-    MockHttpServletRequest request = request("POST","/login");
+    MockHttpServletRequest request = request("POST", "/login");
     MockHttpServletResponse response = new MockHttpServletResponse();
 
     filter.doFilter(request, response, new MockFilterChain());

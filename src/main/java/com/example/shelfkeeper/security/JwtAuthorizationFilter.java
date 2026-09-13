@@ -29,7 +29,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
   /** JWT の発行・検証を担うサービス。 */
   private final JwtService jwtService;
   /** ログインエンドポイントのマッチャー。 */
-  private final PathPatternRequestMatcher loginMatcher = PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, "/login");
+  private final PathPatternRequestMatcher loginMatcher = PathPatternRequestMatcher.withDefaults()
+      .matcher(HttpMethod.POST, "/login");
 
   public JwtAuthorizationFilter(JwtService jwtService) {
     this.jwtService = jwtService;
@@ -39,21 +40,21 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
    * JWT を検証し、有効な場合は認証情報を SecurityContext に設定する。
    * トークンが無効な場合は 401 を返す。
    *
-   * @param request HTTP リクエスト
-   * @param response HTTP レスポンス
+   * @param request     HTTP リクエスト
+   * @param response    HTTP レスポンス
    * @param filterChain フィルターチェーン
    */
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
 
-    if(loginMatcher.matches(request)) {
+    if (loginMatcher.matches(request)) {
       filterChain.doFilter(request, response);
       return;
     }
 
     String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-    if(header == null || !header.startsWith(BEARER_PREFIX)) {
+    if (header == null || !header.startsWith(BEARER_PREFIX)) {
       filterChain.doFilter(request, response);
       return;
     }
@@ -61,8 +62,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     try {
       DecodedJWT jwt = jwtService.verifyToken(header.substring(BEARER_PREFIX.length()));
       LoginUser loginUser = jwtService.toLoginUser(jwt);
-      UsernamePasswordAuthenticationToken authentication =
-          new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
+      UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(loginUser, null,
+          loginUser.getAuthorities());
 
       SecurityContextHolder.getContext().setAuthentication(authentication);
       filterChain.doFilter(request, response);

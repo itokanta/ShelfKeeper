@@ -55,7 +55,7 @@ public class BookSearchInteractorTest {
     BookSearchOutputData outputData = captor.getValue();
     List<BookSearchItemOutputData> itemList = outputData.getOutputData();
     assertEquals(2, itemList.size());
-    for(int i=0; i < itemList.size(); i++){
+    for (int i = 0; i < itemList.size(); i++) {
       BookStatus bookStatus = findByTitleResult.get(i);
       BookSearchItemOutputData item = itemList.get(i);
       assertEquals(bookStatus.getId(), item.getBookId());

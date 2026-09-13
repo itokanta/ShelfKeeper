@@ -12,7 +12,7 @@ import com.example.shelfkeeper.usecase.port.UserRepository;
  * @author itokanta
  */
 @Service
-public class UserCreateInteractor implements UserCreateUseCase{
+public class UserCreateInteractor implements UserCreateUseCase {
   /** 利用者の永続化を担うリポジトリ。 */
   private final UserRepository userRepository;
 

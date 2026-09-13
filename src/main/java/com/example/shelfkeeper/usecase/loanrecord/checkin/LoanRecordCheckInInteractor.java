@@ -16,7 +16,7 @@ import com.example.shelfkeeper.usecase.port.LoanRecordRepository;
  * @author itokanta
  */
 @Service
-public class LoanRecordCheckInInteractor implements LoanRecordCheckInUseCase{
+public class LoanRecordCheckInInteractor implements LoanRecordCheckInUseCase {
   /** 貸出記録の永続化を担うリポジトリ。 */
   private final LoanRecordRepository loanRecordRepository;
 
@@ -34,17 +34,18 @@ public class LoanRecordCheckInInteractor implements LoanRecordCheckInUseCase{
   @Override
   public void handle(LoanRecordCheckInInputData loanRecordCheckInInputData) {
     Optional<LoanRecord> findByIdResult = loanRecordRepository.findById(loanRecordCheckInInputData.getId());
-    
-    if(findByIdResult.isEmpty()) {
+
+    if (findByIdResult.isEmpty()) {
       throw new BadRequestException("指定された貸出記録は存在しません");
     }
 
     LoanRecord checkInTarget = findByIdResult.get();
 
-    if(checkInTarget.getReturnDate() != null) {
+    if (checkInTarget.getReturnDate() != null) {
       throw new BadRequestException("指定された貸出記録はすでに返却済みです");
     }
 
-    loanRecordRepository.checkIn(new LoanRecord(checkInTarget.getId(), checkInTarget.getUserId(), checkInTarget.getBookId(), checkInTarget.getLoanDate(), checkInTarget.getDueDate(), LocalDate.now()));
+    loanRecordRepository.checkIn(new LoanRecord(checkInTarget.getId(), checkInTarget.getUserId(),
+        checkInTarget.getBookId(), checkInTarget.getLoanDate(), checkInTarget.getDueDate(), LocalDate.now()));
   }
 }

@@ -25,11 +25,10 @@ public class AdminUserJdbcRepository implements AdminUserRepository {
   /** 管理者ユーザーの行マッパー。 */
   private static final RowMapper<AdminUser> ROW_MAPPER = (rs, i) -> {
     AdminUser adminUser = new AdminUser(
-      rs.getInt("id"),
-      rs.getString("name"),
-      rs.getString("mail"),
-      rs.getString("pass")
-    );
+        rs.getInt("id"),
+        rs.getString("name"),
+        rs.getString("mail"),
+        rs.getString("pass"));
     return adminUser;
   };
 
@@ -47,9 +46,9 @@ public class AdminUserJdbcRepository implements AdminUserRepository {
     String sql = "INSERT INTO admin_users (name, mail, pass) VALUES (:name, :mail, :pass);";
 
     SqlParameterSource param = new MapSqlParameterSource()
-              .addValue("name", adminUser.getName())
-              .addValue("mail", adminUser.getMail())
-              .addValue("pass", adminUser.getPass());
+        .addValue("name", adminUser.getName())
+        .addValue("mail", adminUser.getMail())
+        .addValue("pass", adminUser.getPass());
 
     template.update(sql, param);
   }
@@ -76,10 +75,10 @@ public class AdminUserJdbcRepository implements AdminUserRepository {
     String sql = "UPDATE admin_users SET name = :name, mail = :mail, pass = :pass WHERE id = :id;";
 
     SqlParameterSource param = new MapSqlParameterSource()
-              .addValue("id", adminUser.getId())
-              .addValue("name", adminUser.getName())
-              .addValue("mail", adminUser.getMail())
-              .addValue("pass", adminUser.getPass());
+        .addValue("id", adminUser.getId())
+        .addValue("name", adminUser.getName())
+        .addValue("mail", adminUser.getMail())
+        .addValue("pass", adminUser.getPass());
 
     template.update(sql, param);
   }

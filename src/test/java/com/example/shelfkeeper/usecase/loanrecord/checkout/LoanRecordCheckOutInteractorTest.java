@@ -84,7 +84,8 @@ public class LoanRecordCheckOutInteractorTest {
     User findByUserIdResult = new User(1, "testUser");
     Book findByBookIdResult = new Book(2, "test", "testName");
 
-    when(loanRecordRepository.returnDateIsNullFindByBookId(inputData.getBookId())).thenReturn(Optional.of(loanedFindResult));
+    when(loanRecordRepository.returnDateIsNullFindByBookId(inputData.getBookId()))
+        .thenReturn(Optional.of(loanedFindResult));
     when(userRepository.findById(inputData.getUserId())).thenReturn(Optional.of(findByUserIdResult));
     when(bookRepository.findById(inputData.getBookId())).thenReturn(Optional.of(findByBookIdResult));
 
@@ -115,7 +116,7 @@ public class LoanRecordCheckOutInteractorTest {
     verify(bookRepository).findById(inputData.getBookId());
     verify(loanRecordRepository, never()).checkOut(any());
   }
-  
+
   /**
    * 蔵書が存在しない場合、例外をスローし登録しないことを検証する。
    */

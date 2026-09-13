@@ -31,7 +31,7 @@ public class UserListPresenter implements UserListOutputBoundary {
   public void complete(UserListOutputData userListOutputData) {
     List<UserListItem> userList = new ArrayList<>();
 
-    for(UserListItemOutputData outputData : userListOutputData.getUserList()) {
+    for (UserListItemOutputData outputData : userListOutputData.getUserList()) {
       userList.add(new UserListItem(outputData.getId(), outputData.getName()));
     }
 

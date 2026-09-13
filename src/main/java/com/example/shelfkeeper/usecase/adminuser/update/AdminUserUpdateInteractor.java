@@ -14,7 +14,7 @@ import com.example.shelfkeeper.usecase.port.AdminUserRepository;
  * @author itokanta
  */
 @Service
-public class AdminUserUpdateInteractor implements AdminUserUpdateUseCase{
+public class AdminUserUpdateInteractor implements AdminUserUpdateUseCase {
   /** 管理者ユーザーの永続化を担うリポジトリ。 */
   private final AdminUserRepository adminUserRepository;
   /** パスワードのハッシュ化に用いるエンコーダー。 */
@@ -39,15 +39,15 @@ public class AdminUserUpdateInteractor implements AdminUserUpdateUseCase{
     String mail = dbData.getMail();
     String pass = dbData.getPass();
 
-    if(adminUserUpdateInputData.getName() != null) {
+    if (adminUserUpdateInputData.getName() != null) {
       name = adminUserUpdateInputData.getName();
     }
 
-    if(adminUserUpdateInputData.getMail() != null) {
+    if (adminUserUpdateInputData.getMail() != null) {
       mail = adminUserUpdateInputData.getMail();
     }
 
-    if(adminUserUpdateInputData.getPass() != null) {
+    if (adminUserUpdateInputData.getPass() != null) {
       pass = passwordEncoder.encode(adminUserUpdateInputData.getPass());
     }
 

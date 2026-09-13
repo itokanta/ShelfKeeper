@@ -28,24 +28,24 @@ public class LoanRecordJdbcRepository implements LoanRecordRepository {
   private static final RowMapper<LoanRecord> LOAN_ROW_MAPPER = (rs, i) -> {
     LocalDate returnDate = rs.getObject("return_date", LocalDate.class);
     LoanRecord loanRecord = new LoanRecord(
-      rs.getInt("id"),
-      rs.getInt("user_id"),
-      rs.getInt("book_id"),
-      rs.getObject("loan_date", LocalDate.class),
-      rs.getObject("due_date", LocalDate.class),
-      returnDate != null ? returnDate : null);
+        rs.getInt("id"),
+        rs.getInt("user_id"),
+        rs.getInt("book_id"),
+        rs.getObject("loan_date", LocalDate.class),
+        rs.getObject("due_date", LocalDate.class),
+        returnDate != null ? returnDate : null);
     return loanRecord;
   };
 
   /** 書籍の貸出履歴の行マッパー。 */
   private static final RowMapper<BookHistory> BOOK_HISTORY_ROW_MAPPER = (rs, i) -> {
     BookHistory bookHistory = new BookHistory(
-      rs.getInt("loan_id"),
-      rs.getString("user_name"),
-      rs.getString("book_title"),
-      rs.getObject("loan_date", LocalDate.class),
-      rs.getObject("due_date", LocalDate.class),
-      rs.getObject("return_date", LocalDate.class));
+        rs.getInt("loan_id"),
+        rs.getString("user_name"),
+        rs.getString("book_title"),
+        rs.getObject("loan_date", LocalDate.class),
+        rs.getObject("due_date", LocalDate.class),
+        rs.getObject("return_date", LocalDate.class));
     return bookHistory;
   };
 
@@ -62,8 +62,8 @@ public class LoanRecordJdbcRepository implements LoanRecordRepository {
   public void checkIn(LoanRecord loanRecord) {
     String sql = "UPDATE loan_records SET return_date = :returnDate WHERE id = :id;";
     SqlParameterSource param = new MapSqlParameterSource()
-              .addValue("returnDate", loanRecord.getReturnDate())
-              .addValue("id", loanRecord.getId());
+        .addValue("returnDate", loanRecord.getReturnDate())
+        .addValue("id", loanRecord.getId());
     template.update(sql, param);
   }
 
@@ -75,13 +75,13 @@ public class LoanRecordJdbcRepository implements LoanRecordRepository {
   @Override
   public void checkOut(LoanRecord loanRecord) {
     String sql = "INSERT INTO loan_records (user_id, book_id, loan_date, due_date, return_date) "
-              + "VALUES (:userId, :bookId, :loanDate, :dueDate, :returnDate);";
+        + "VALUES (:userId, :bookId, :loanDate, :dueDate, :returnDate);";
     SqlParameterSource param = new MapSqlParameterSource()
-            .addValue("userId", loanRecord.getUserId())
-            .addValue("bookId", loanRecord.getBookId())
-            .addValue("loanDate", loanRecord.getLoanDate())
-            .addValue("dueDate", loanRecord.getDueDate())
-            .addValue("returnDate", null);
+        .addValue("userId", loanRecord.getUserId())
+        .addValue("bookId", loanRecord.getBookId())
+        .addValue("loanDate", loanRecord.getLoanDate())
+        .addValue("dueDate", loanRecord.getDueDate())
+        .addValue("returnDate", null);
 
     template.update(sql, param);
   }
@@ -95,17 +95,17 @@ public class LoanRecordJdbcRepository implements LoanRecordRepository {
   @Override
   public List<BookHistory> findByBookId(Integer bookId) {
     String sql = "SELECT "
-              + "l.id AS loan_id, "
-              + "u.name AS user_name, "
-              + "b.title AS book_title, "
-              + "l.loan_date AS loan_date, "
-              + "l.due_date AS due_date, "
-              + "l.return_date AS return_date "
-              + "FROM loan_records l "
-              + "JOIN users u ON l.user_id = u.id "
-              + "JOIN books b ON l.book_id = b.id "
-              + "WHERE l.book_id = :bookId "
-              + "ORDER BY l.loan_date DESC, l.id DESC;";
+        + "l.id AS loan_id, "
+        + "u.name AS user_name, "
+        + "b.title AS book_title, "
+        + "l.loan_date AS loan_date, "
+        + "l.due_date AS due_date, "
+        + "l.return_date AS return_date "
+        + "FROM loan_records l "
+        + "JOIN users u ON l.user_id = u.id "
+        + "JOIN books b ON l.book_id = b.id "
+        + "WHERE l.book_id = :bookId "
+        + "ORDER BY l.loan_date DESC, l.id DESC;";
 
     SqlParameterSource param = new MapSqlParameterSource().addValue("bookId", bookId);
     return template.query(sql, param, BOOK_HISTORY_ROW_MAPPER);

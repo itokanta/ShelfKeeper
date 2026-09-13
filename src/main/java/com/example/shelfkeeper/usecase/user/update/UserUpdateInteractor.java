@@ -12,7 +12,7 @@ import com.example.shelfkeeper.usecase.port.UserRepository;
  *
  * @author itokanta
  */
-public class UserUpdateInteractor implements UserUpdateUseCase{
+public class UserUpdateInteractor implements UserUpdateUseCase {
   /** 利用者の永続化を担うリポジトリ。 */
   private final UserRepository userRepository;
 
@@ -32,13 +32,13 @@ public class UserUpdateInteractor implements UserUpdateUseCase{
   public void handle(UserUpdateInputData updateInputData) {
     Optional<User> dbData = userRepository.findById(updateInputData.getId());
 
-    if(dbData.isEmpty()){
+    if (dbData.isEmpty()) {
       throw new BadRequestException("指定されたユーザーは存在しません");
     }
 
     String name = dbData.get().getName();
 
-    if(updateInputData.getName() != null) {
+    if (updateInputData.getName() != null) {
       name = updateInputData.getName();
     }
 

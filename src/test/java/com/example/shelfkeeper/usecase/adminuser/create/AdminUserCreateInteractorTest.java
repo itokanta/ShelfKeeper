@@ -67,7 +67,8 @@ public class AdminUserCreateInteractorTest {
   void handleError() {
     AdminUserCreateInputData newUser = new AdminUserCreateInputData("test", "test@test", "testtest");
 
-    when(adminUserRepository.findByMail(newUser.getMail())).thenReturn(Optional.of(new AdminUser(1, "test", "test@test", "hashed-pass")));
+    when(adminUserRepository.findByMail(newUser.getMail()))
+        .thenReturn(Optional.of(new AdminUser(1, "test", "test@test", "hashed-pass")));
 
     assertThrows(BadRequestException.class, () -> adminUserCreateInteractor.handle(newUser));
 

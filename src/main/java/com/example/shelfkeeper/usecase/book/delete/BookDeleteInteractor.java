@@ -15,7 +15,7 @@ import com.example.shelfkeeper.usecase.port.BookRepository;
  * @author itokanta
  */
 @Service
-public class BookDeleteInteractor implements BookDeleteUseCase{
+public class BookDeleteInteractor implements BookDeleteUseCase {
   /** 蔵書の永続化を担うリポジトリ。 */
   private final BookRepository bookRepository;
 
@@ -35,7 +35,7 @@ public class BookDeleteInteractor implements BookDeleteUseCase{
     Integer deleteTargetId = bookDeleteInputData.getId();
     Optional<Book> deleteTarget = bookRepository.findById(deleteTargetId);
 
-    if(deleteTarget.isEmpty()) {
+    if (deleteTarget.isEmpty()) {
       throw new BadRequestException("指定された書籍は登録されていません");
     }
 

@@ -54,7 +54,7 @@ public class UserListInteractorTest {
     UserListOutputData outputData = captor.getValue();
     List<UserListItemOutputData> itemList = outputData.getUserList();
     assertEquals(2, itemList.size());
-    for(int i = 0; i < itemList.size(); i++) {
+    for (int i = 0; i < itemList.size(); i++) {
       assertEquals(findAllResult.get(i).getId(), itemList.get(i).getId());
       assertEquals(findAllResult.get(i).getName(), itemList.get(i).getName());
     }

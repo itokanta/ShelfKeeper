@@ -32,13 +32,12 @@ public class BookListPresenter implements BookListOutputBoundary {
   public void complete(BookListOutputData bookListOutputData) {
     List<BookListItem> responseItemList = new ArrayList<>();
 
-    for(BookListItemOutputData outputData : bookListOutputData.getOutputData()) {
+    for (BookListItemOutputData outputData : bookListOutputData.getOutputData()) {
       BookListItem item = new BookListItem(
-        outputData.getBookId(), 
-        outputData.getTitle(),
-        outputData.getAuthorName(), 
-        outputData.getStatus() ? "貸出可能" : "貸出不可"
-      );
+          outputData.getBookId(),
+          outputData.getTitle(),
+          outputData.getAuthorName(),
+          outputData.getStatus() ? "貸出可能" : "貸出不可");
       responseItemList.add(item);
     }
 

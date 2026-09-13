@@ -44,14 +44,12 @@ public class UserOverDueListInteractorTest {
     List<UserOverDue> findOverDueUserResult = new ArrayList<>();
 
     List<UserOverDueBook> overDueBookList1 = new ArrayList<>(List.of(
-      new UserOverDueBook(1, "testTitle1", LocalDate.of(2026, 8, 21), LocalDate.of(2026, 8, 25)), 
-      new UserOverDueBook(2, "testTitle2", LocalDate.of(2026, 9, 21), LocalDate.of(2026, 9, 25))
-    ));
+        new UserOverDueBook(1, "testTitle1", LocalDate.of(2026, 8, 21), LocalDate.of(2026, 8, 25)),
+        new UserOverDueBook(2, "testTitle2", LocalDate.of(2026, 9, 21), LocalDate.of(2026, 9, 25))));
 
     List<UserOverDueBook> overDueBookList2 = new ArrayList<>(List.of(
-      new UserOverDueBook(3, "testTitle3", LocalDate.of(2026, 10, 21), LocalDate.of(2026, 10, 25)),
-      new UserOverDueBook(4, "testTitle4", LocalDate.of(2026, 11, 21), LocalDate.of(2026, 11, 25))
-    ));
+        new UserOverDueBook(3, "testTitle3", LocalDate.of(2026, 10, 21), LocalDate.of(2026, 10, 25)),
+        new UserOverDueBook(4, "testTitle4", LocalDate.of(2026, 11, 21), LocalDate.of(2026, 11, 25))));
 
     findOverDueUserResult.add(new UserOverDue(1, "test1", overDueBookList1));
     findOverDueUserResult.add(new UserOverDue(2, "test2", overDueBookList2));
@@ -67,7 +65,7 @@ public class UserOverDueListInteractorTest {
     UserOverDueListOutputData outputData = captor.getValue();
     List<UserOverDueListItemOutputData> itemList = outputData.getOutputDataList();
     assertEquals(2, itemList.size());
-    for(int i = 0; i < itemList.size(); i++) {
+    for (int i = 0; i < itemList.size(); i++) {
       assertEquals(findOverDueUserResult.get(i).getUserId(), itemList.get(i).getUserId());
       assertEquals(findOverDueUserResult.get(i).getUserName(), itemList.get(i).getUserName());
     }
@@ -76,7 +74,7 @@ public class UserOverDueListInteractorTest {
     List<UserOverDueListDueBookItem> bookList2 = itemList.get(1).getDueBookList();
     assertEquals(2, bookList1.size());
     assertEquals(2, bookList2.size());
-    for(int i = 0; i < bookList1.size(); i++) {
+    for (int i = 0; i < bookList1.size(); i++) {
       assertEquals(overDueBookList1.get(i).getBookId(), bookList1.get(i).getBookId());
       assertEquals(overDueBookList1.get(i).getBookTitle(), bookList1.get(i).getBookTitle());
       assertEquals(overDueBookList1.get(i).getDueDate(), bookList1.get(i).getDueDate());

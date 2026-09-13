@@ -43,7 +43,7 @@ import com.example.shelfkeeper.usecase.adminuser.update.AdminUserUpdateUseCase;
  * @author itokanta
  */
 @WebMvcTest(AdminUserController.class)
-@AutoConfigureMockMvc(addFilters =  false)
+@AutoConfigureMockMvc(addFilters = false)
 public class AdminUserControllerTest {
 
   private final MockMvc mockMvc;
@@ -52,7 +52,7 @@ public class AdminUserControllerTest {
   private AdminUserCreateUseCase adminUserCreateUseCase;
 
   @MockitoBean
-  private  AdminUserDeleteUseCase adminUserDeleteUseCase;
+  private AdminUserDeleteUseCase adminUserDeleteUseCase;
 
   @MockitoBean
   private AdminUserFindSingleUseCase adminUserFindSingleUseCase;
@@ -63,7 +63,7 @@ public class AdminUserControllerTest {
   @MockitoBean
   private AdminUserUpdateUseCase adminUserUpdateUseCase;
 
-  @Autowired 
+  @Autowired
   public AdminUserControllerTest(MockMvc mockMvc) {
     this.mockMvc = mockMvc;
   }
@@ -74,12 +74,13 @@ public class AdminUserControllerTest {
   @Test
   void createSuccess() throws Exception {
     mockMvc.perform(post("/adminusers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"name\":\"test\",\"mail\":\"test@test.com\",\"pass\":\"testTest\"}"))
-            .andExpect(status().isCreated());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"name\":\"test\",\"mail\":\"test@test.com\",\"pass\":\"testTest\"}"))
+        .andExpect(status().isCreated());
 
     ArgumentCaptor<AdminUserCreateInputData> captor = ArgumentCaptor.forClass(AdminUserCreateInputData.class);
-    verify(adminUserCreateUseCase).handle(captor.capture());;
+    verify(adminUserCreateUseCase).handle(captor.capture());
+    ;
 
     AdminUserCreateInputData inputData = captor.getValue();
     assertEquals("test", inputData.getName());
@@ -93,9 +94,9 @@ public class AdminUserControllerTest {
   @Test
   void createValidationError() throws Exception {
     mockMvc.perform(post("/adminusers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"name\":\"test\",\"mail\":\"\",\"pass\":\"testTest\"}"))
-            .andExpect(status().isBadRequest());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"name\":\"test\",\"mail\":\"\",\"pass\":\"testTest\"}"))
+        .andExpect(status().isBadRequest());
 
     verify(adminUserCreateUseCase, never()).handle(any());
   }
@@ -103,18 +104,17 @@ public class AdminUserControllerTest {
   /**
    * ログイン中の管理者ユーザーを削除できることを検証する。
    */
-  @Test 
+  @Test
   void deleteSuccess() throws Exception {
     LoginUser loginUser = new LoginUser(new AdminUser(1, "test", "test@test", "testHashed"));
 
     mockMvc.perform(delete("/adminusers")
-            .with(request -> {
-              SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities())
-              );
-              return request;
-            }))
-            .andExpect(status().isNoContent());
+        .with(request -> {
+          SecurityContextHolder.getContext().setAuthentication(
+              new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities()));
+          return request;
+        }))
+        .andExpect(status().isNoContent());
     ArgumentCaptor<AdminUserDeleteInputData> captor = ArgumentCaptor.forClass(AdminUserDeleteInputData.class);
     verify(adminUserDeleteUseCase).handle(captor.capture());
 
@@ -132,15 +132,14 @@ public class AdminUserControllerTest {
     when(adminUserFindSinglePresenter.getResponse()).thenReturn(response);
 
     mockMvc.perform(get("/adminusers/me")
-            .with(request -> {
-              SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities())
-              );
-              return request;
-            }))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.name").value("test"))
-            .andExpect(jsonPath("$.mail").value("test@test"));
+        .with(request -> {
+          SecurityContextHolder.getContext().setAuthentication(
+              new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities()));
+          return request;
+        }))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.name").value("test"))
+        .andExpect(jsonPath("$.mail").value("test@test"));
 
     ArgumentCaptor<AdminUserFindSingleInputData> captor = ArgumentCaptor.forClass(AdminUserFindSingleInputData.class);
     verify(adminUserFindSingleUseCase).handle(captor.capture());
@@ -156,15 +155,14 @@ public class AdminUserControllerTest {
     LoginUser loginUser = new LoginUser(new AdminUser(1, "test", "test@test.com", "testHashed"));
 
     mockMvc.perform(put("/adminusers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"name\":\"test2\",\"mail\":\"test2@test.com\",\"pass\":\"testTest2\"}")
-            .with(request -> {
-              SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities())
-              );
-              return request;
-            }))
-            .andExpect(status().isNoContent());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"name\":\"test2\",\"mail\":\"test2@test.com\",\"pass\":\"testTest2\"}")
+        .with(request -> {
+          SecurityContextHolder.getContext().setAuthentication(
+              new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities()));
+          return request;
+        }))
+        .andExpect(status().isNoContent());
 
     ArgumentCaptor<AdminUserUpdateInputData> captor = ArgumentCaptor.forClass(AdminUserUpdateInputData.class);
     verify(adminUserUpdateUseCase).handle(captor.capture());
@@ -184,15 +182,14 @@ public class AdminUserControllerTest {
     LoginUser loginUser = new LoginUser(new AdminUser(1, "test", "test@test.com", "testHashed"));
 
     mockMvc.perform(put("/adminusers")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"name\":\"test2\",\"mail\":\"test2test\",\"pass\":\"testTest2\"}")
-            .with(request -> {
-              SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities())
-              );
-              return request;
-            }))
-            .andExpect(status().isBadRequest());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"name\":\"test2\",\"mail\":\"test2test\",\"pass\":\"testTest2\"}")
+        .with(request -> {
+          SecurityContextHolder.getContext().setAuthentication(
+              new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities()));
+          return request;
+        }))
+        .andExpect(status().isBadRequest());
 
     verify(adminUserUpdateUseCase, never()).handle(any());
   }

@@ -67,19 +67,18 @@ public class LoanRecordControllerTest {
   @Test
   void bookHistorySuccess() throws Exception {
     List<LoanRecordBookHistoryItem> responseItem = List.of(new LoanRecordBookHistoryItem(
-      1,
-      "testUserName",
-      "testBookName",
-      LocalDate.of(2026, 8, 25),
-      LocalDate.of(2026, 8, 29),
-      LocalDate.of(2026, 8, 28)
-    ));
+        1,
+        "testUserName",
+        "testBookName",
+        LocalDate.of(2026, 8, 25),
+        LocalDate.of(2026, 8, 29),
+        LocalDate.of(2026, 8, 28)));
     LoanRecordBookHistoryResponse response = new LoanRecordBookHistoryResponse(responseItem);
 
     when(loanRecordBookHistoryPresenter.getResponse()).thenReturn(response);
 
     mockMvc.perform(get("/loanrecords/bookhistory")
-            .param("bookId", "1"))
+        .param("bookId", "1"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.loanRecordBookHistoryList[0].loanRecordId").value(1))
         .andExpect(jsonPath("$.loanRecordBookHistoryList[0].userName").value("testUserName"))
@@ -88,7 +87,8 @@ public class LoanRecordControllerTest {
         .andExpect(jsonPath("$.loanRecordBookHistoryList[0].dueDate").value("2026-08-29"))
         .andExpect(jsonPath("$.loanRecordBookHistoryList[0].returnDate").value("2026-08-28"));
 
-    ArgumentCaptor<LoanRecordBookHistoryInputData> captor = ArgumentCaptor.forClass(LoanRecordBookHistoryInputData.class);
+    ArgumentCaptor<LoanRecordBookHistoryInputData> captor = ArgumentCaptor
+        .forClass(LoanRecordBookHistoryInputData.class);
     verify(loanRecordBookHistoryUseCase).handle(captor.capture());
 
     assertEquals(1, captor.getValue().getBookId());
@@ -100,7 +100,7 @@ public class LoanRecordControllerTest {
   @Test
   void bookHistoryValidationError() throws Exception {
     mockMvc.perform(get("/loanrecords/bookhistory")
-            .param("bookId", "0"))
+        .param("bookId", "0"))
         .andExpect(status().isBadRequest());
 
     verify(loanRecordBookHistoryUseCase, never()).handle(any());
@@ -112,8 +112,8 @@ public class LoanRecordControllerTest {
   @Test
   void checkOutSuccess() throws Exception {
     mockMvc.perform(post("/loanrecords")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"userId\":\"1\",\"bookId\":\"2\"}"))
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"userId\":\"1\",\"bookId\":\"2\"}"))
         .andExpect(status().isCreated());
 
     ArgumentCaptor<LoanRecordCheckOutInputData> captor = ArgumentCaptor.forClass(LoanRecordCheckOutInputData.class);
@@ -130,8 +130,8 @@ public class LoanRecordControllerTest {
   @Test
   void checkOutValidationError() throws Exception {
     mockMvc.perform(post("/loanrecords")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"userId\":\"0\",\"bookId\":\"0\"}"))
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"userId\":\"0\",\"bookId\":\"0\"}"))
         .andExpect(status().isBadRequest());
 
     verify(loanRecordCheckOutUseCase, never()).handle(any());

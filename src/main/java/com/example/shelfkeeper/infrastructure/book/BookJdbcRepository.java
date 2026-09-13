@@ -38,10 +38,10 @@ public class BookJdbcRepository implements BookRepository {
   /** 蔵書と貸出状態の行マッパー。 */
   private static final RowMapper<BookStatus> BOOK_STATUS_ROW_MAPPER = (rs, i) -> {
     BookStatus bookStatus = new BookStatus(
-              rs.getInt("book_id"),
-              rs.getString("book_title"),
-              rs.getString("author_name"),
-              rs.getObject("loan_id", Integer.class) == null);
+        rs.getInt("book_id"),
+        rs.getString("book_title"),
+        rs.getString("author_name"),
+        rs.getObject("loan_id", Integer.class) == null);
     return bookStatus;
   };
 
@@ -62,15 +62,15 @@ public class BookJdbcRepository implements BookRepository {
     Optional<Author> findResult = findByAuthorName(book.getAuthorName());
     Integer authorId;
 
-    if(findResult.isEmpty()) {
+    if (findResult.isEmpty()) {
       authorId = createAuthorReturnId(new Author(null, book.getAuthorName()));
     } else {
       authorId = findResult.get().getId();
     }
 
     SqlParameterSource param = new MapSqlParameterSource()
-            .addValue("title", book.getTitle())
-            .addValue("authorId", authorId);
+        .addValue("title", book.getTitle())
+        .addValue("authorId", authorId);
     template.update(sql, param);
   }
 
@@ -94,14 +94,14 @@ public class BookJdbcRepository implements BookRepository {
   @Override
   public List<BookStatus> findAll() {
     String sql = "SELECT "
-              + "b.id AS book_id, "
-              + "b.title AS book_title, "
-              + "a.name AS author_name, "
-              + "l.id AS loan_id "
-              + "FROM books b "
-              + "JOIN authors a ON a.id = b.author_id "
-              + "LEFT JOIN loan_records l ON l.book_id = b.id AND l.return_date IS NULL "
-              + "ORDER BY b.created_at DESC, b.id DESC;";
+        + "b.id AS book_id, "
+        + "b.title AS book_title, "
+        + "a.name AS author_name, "
+        + "l.id AS loan_id "
+        + "FROM books b "
+        + "JOIN authors a ON a.id = b.author_id "
+        + "LEFT JOIN loan_records l ON l.book_id = b.id AND l.return_date IS NULL "
+        + "ORDER BY b.created_at DESC, b.id DESC;";
 
     return template.query(sql, BOOK_STATUS_ROW_MAPPER);
   }
@@ -115,12 +115,12 @@ public class BookJdbcRepository implements BookRepository {
   @Override
   public Optional<Book> findById(Integer id) {
     String sql = "SELECT "
-              + "b.id AS book_id, "
-              + "b.title AS book_title, "
-              + "a.name AS author_name "
-              + "FROM books b "
-              + "JOIN authors a ON a.id = b.author_id "
-              + "WHERE b.id = :id;";
+        + "b.id AS book_id, "
+        + "b.title AS book_title, "
+        + "a.name AS author_name "
+        + "FROM books b "
+        + "JOIN authors a ON a.id = b.author_id "
+        + "WHERE b.id = :id;";
     SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
 
     List<Book> result = template.query(sql, param, BOOK_ROW_MAPPER);
@@ -136,15 +136,15 @@ public class BookJdbcRepository implements BookRepository {
   @Override
   public List<BookStatus> findByTitle(String title) {
     String sql = "SELECT "
-              + "b.id AS book_id, "
-              + "b.title AS book_title, "
-              + "a.name AS author_name, "
-              + "l.id AS loan_id "
-              + "FROM books b "
-              + "JOIN authors a ON a.id = b.author_id "
-              + "LEFT JOIN loan_records l ON l.book_id = b.id AND l.return_date IS NULL "
-              + "WHERE b.title LIKE :title "
-              + "ORDER BY b.created_at DESC, b.id DESC;";
+        + "b.id AS book_id, "
+        + "b.title AS book_title, "
+        + "a.name AS author_name, "
+        + "l.id AS loan_id "
+        + "FROM books b "
+        + "JOIN authors a ON a.id = b.author_id "
+        + "LEFT JOIN loan_records l ON l.book_id = b.id AND l.return_date IS NULL "
+        + "WHERE b.title LIKE :title "
+        + "ORDER BY b.created_at DESC, b.id DESC;";
     SqlParameterSource param = new MapSqlParameterSource().addValue("title", "%" + title + "%");
 
     return template.query(sql, param, BOOK_STATUS_ROW_MAPPER);

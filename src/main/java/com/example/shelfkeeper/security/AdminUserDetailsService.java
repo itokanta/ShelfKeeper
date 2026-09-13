@@ -16,7 +16,7 @@ import com.example.shelfkeeper.usecase.port.AdminUserRepository;
  * @author itokanta
  */
 @Service
-public class AdminUserDetailsService implements UserDetailsService{
+public class AdminUserDetailsService implements UserDetailsService {
   /** 管理者ユーザーの永続化を担うリポジトリ。 */
   private final AdminUserRepository adminUserRepository;
 
@@ -35,7 +35,7 @@ public class AdminUserDetailsService implements UserDetailsService{
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     Optional<AdminUser> userCheck = adminUserRepository.findByMail(username);
 
-    if(userCheck.isEmpty()) {
+    if (userCheck.isEmpty()) {
       throw new UsernameNotFoundException("ユーザーが見つかりません：" + username);
     }
 

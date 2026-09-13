@@ -77,8 +77,8 @@ public class UserControllerTest {
   @Test
   void createSuccess() throws Exception {
     mockMvc.perform(post("/users")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"name\":\"test\"}"))
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"name\":\"test\"}"))
         .andExpect(status().isCreated());
 
     ArgumentCaptor<UserCreateInputData> captor = ArgumentCaptor.forClass(UserCreateInputData.class);
@@ -93,8 +93,8 @@ public class UserControllerTest {
   @Test
   void createValidationError() throws Exception {
     mockMvc.perform(post("/users")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"name\":\"\"}"))
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"name\":\"\"}"))
         .andExpect(status().isBadRequest());
 
     verify(userCreateUseCase, never()).handle(any());
@@ -147,12 +147,12 @@ public class UserControllerTest {
   @Test
   void overDueListSuccess() throws Exception {
     List<DueBookListItem> dueBookList = List.of(new DueBookListItem(
-      1,
-      "testTitle",
-      LocalDate.of(2026, 8, 25),
-      LocalDate.of(2026, 8, 29)
-    ));
-    UserOverDueListResponse response = new UserOverDueListResponse(List.of(new UserOverDueListItem(2, "testName", dueBookList)));
+        1,
+        "testTitle",
+        LocalDate.of(2026, 8, 25),
+        LocalDate.of(2026, 8, 29)));
+    UserOverDueListResponse response = new UserOverDueListResponse(
+        List.of(new UserOverDueListItem(2, "testName", dueBookList)));
 
     when(userOverDueListPresenter.getResponse()).thenReturn(response);
 

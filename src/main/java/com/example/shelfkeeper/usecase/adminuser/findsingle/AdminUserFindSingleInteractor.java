@@ -12,7 +12,7 @@ import com.example.shelfkeeper.usecase.port.AdminUserRepository;
  * @author itokanta
  */
 @Service
-public class AdminUserFindSingleInteractor implements AdminUserFindSingleUseCase{
+public class AdminUserFindSingleInteractor implements AdminUserFindSingleUseCase {
   /** 管理者ユーザーの永続化を担うリポジトリ。 */
   private final AdminUserRepository adminUserRepository;
   /** 取得結果を後続処理へ引き渡す出力境界。 */
@@ -33,7 +33,8 @@ public class AdminUserFindSingleInteractor implements AdminUserFindSingleUseCase
   public void handle(AdminUserFindSingleInputData adminUserFindSingleInputData) {
     AdminUser adminUser = adminUserRepository.findById(adminUserFindSingleInputData.getId());
 
-    AdminUserFindSingleOutputData outputData = new AdminUserFindSingleOutputData(adminUser.getName(), adminUser.getMail());
+    AdminUserFindSingleOutputData outputData = new AdminUserFindSingleOutputData(adminUser.getName(),
+        adminUser.getMail());
 
     adminUserFindSingleOutputBoundary.complete(outputData);
   }

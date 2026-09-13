@@ -32,10 +32,11 @@ public class UserOverDueListPresenter implements UserOverDueListOutputBoundary {
   public void complete(UserOverDueListOutputData userOverDueListOutputData) {
     List<UserOverDueListItem> userOverDueList = new ArrayList<>();
 
-    for(UserOverDueListItemOutputData outputData : userOverDueListOutputData.getOutputDataList()) {
+    for (UserOverDueListItemOutputData outputData : userOverDueListOutputData.getOutputDataList()) {
       List<DueBookListItem> overDueBookList = new ArrayList<>();
-      for(UserOverDueListDueBookItem dueBookItem : outputData.getDueBookList()) {
-        overDueBookList.add(new DueBookListItem(dueBookItem.getBookId(), dueBookItem.getBookTitle(), dueBookItem.getLoanDate(), dueBookItem.getDueDate()));
+      for (UserOverDueListDueBookItem dueBookItem : outputData.getDueBookList()) {
+        overDueBookList.add(new DueBookListItem(dueBookItem.getBookId(), dueBookItem.getBookTitle(),
+            dueBookItem.getLoanDate(), dueBookItem.getDueDate()));
       }
       userOverDueList.add(new UserOverDueListItem(outputData.getUserId(), outputData.getUserName(), overDueBookList));
     }

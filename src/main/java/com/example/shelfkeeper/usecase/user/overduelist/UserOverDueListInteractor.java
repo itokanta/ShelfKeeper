@@ -16,7 +16,7 @@ import com.example.shelfkeeper.usecase.port.entity.user.UserOverDue;
  * @author itokanta
  */
 @Service
-public class UserOverDueListInteractor implements UserOverDueListUseCase{
+public class UserOverDueListInteractor implements UserOverDueListUseCase {
   /** 利用者の永続化を担うリポジトリ。 */
   private final UserRepository userRepository;
   /** 取得結果を後続処理へ引き渡す出力境界。 */
@@ -36,23 +36,21 @@ public class UserOverDueListInteractor implements UserOverDueListUseCase{
     List<UserOverDue> userOverDueList = userRepository.findOverDueUser();
     List<UserOverDueListItemOutputData> outputDataList = new ArrayList<>();
 
-    for(UserOverDue userOverDue : userOverDueList) {
+    for (UserOverDue userOverDue : userOverDueList) {
       List<UserOverDueListDueBookItem> bookList = new ArrayList<>();
-      for(UserOverDueBook userOverDueBook : userOverDue.getDueBookList()){
+      for (UserOverDueBook userOverDueBook : userOverDue.getDueBookList()) {
         UserOverDueListDueBookItem dueBook = new UserOverDueListDueBookItem(
-          userOverDueBook.getBookId(),
-          userOverDueBook.getBookTitle(),
-          userOverDueBook.getLoanDate(),
-          userOverDueBook.getDueDate()
-        );
+            userOverDueBook.getBookId(),
+            userOverDueBook.getBookTitle(),
+            userOverDueBook.getLoanDate(),
+            userOverDueBook.getDueDate());
         bookList.add(dueBook);
       }
 
       UserOverDueListItemOutputData outputData = new UserOverDueListItemOutputData(
-        userOverDue.getUserId(),
-        userOverDue.getUserName(),
-        bookList
-      );
+          userOverDue.getUserId(),
+          userOverDue.getUserName(),
+          bookList);
       outputDataList.add(outputData);
     }
 

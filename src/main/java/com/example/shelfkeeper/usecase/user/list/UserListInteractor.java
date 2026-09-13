@@ -15,7 +15,7 @@ import com.example.shelfkeeper.usecase.port.UserRepository;
  * @author itokanta
  */
 @Service
-public class UserListInteractor implements UserListUseCase{
+public class UserListInteractor implements UserListUseCase {
   /** 利用者の永続化を担うリポジトリ。 */
   private final UserRepository userRepository;
   /** 取得結果を後続処理へ引き渡す出力境界。 */
@@ -34,7 +34,7 @@ public class UserListInteractor implements UserListUseCase{
     List<User> userList = userRepository.findAll();
     List<UserListItemOutputData> outputData = new ArrayList<>();
 
-    for(User user : userList) {
+    for (User user : userList) {
       outputData.add(new UserListItemOutputData(user.getId(), user.getName()));
     }
 

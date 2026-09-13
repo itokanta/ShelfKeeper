@@ -15,7 +15,7 @@ import com.example.shelfkeeper.usecase.port.UserRepository;
  * @author itokanta
  */
 @Service
-public class UserDeleteInteractor implements UserDeleteUseCase{
+public class UserDeleteInteractor implements UserDeleteUseCase {
   /** 利用者の永続化を担うリポジトリ。 */
   private final UserRepository userRepository;
 
@@ -35,7 +35,7 @@ public class UserDeleteInteractor implements UserDeleteUseCase{
     Integer deleteTargetId = userDeleteInputData.getId();
     Optional<User> deleteTarget = userRepository.findById(deleteTargetId);
 
-    if(deleteTarget.isEmpty()){
+    if (deleteTarget.isEmpty()) {
       throw new BadRequestException("指定されたユーザーは存在しません");
     }
 

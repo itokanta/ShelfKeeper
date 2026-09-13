@@ -34,18 +34,18 @@ public class LoanRecordBookHistoryInteractor implements LoanRecordBookHistoryUse
    */
   @Override
   public void handle(LoanRecordBookHistoryInputData loanRecordBookHistoryInputData) {
-    List<BookHistory> findByBookIdResult = loanRecordRepository.findByBookId(loanRecordBookHistoryInputData.getBookId());
+    List<BookHistory> findByBookIdResult = loanRecordRepository
+        .findByBookId(loanRecordBookHistoryInputData.getBookId());
     List<LoanRecordBookHistoryItemOutputData> outputItemList = new ArrayList<>();
 
-    for(BookHistory bookHistory : findByBookIdResult) {
+    for (BookHistory bookHistory : findByBookIdResult) {
       outputItemList.add(new LoanRecordBookHistoryItemOutputData(
-        bookHistory.getLoanRecordId(),
-        bookHistory.getUserName(),
-        bookHistory.getBookName(),
-        bookHistory.getLoanDate(),
-        bookHistory.getDueDate(),
-        bookHistory.getReturnDate()
-      ));
+          bookHistory.getLoanRecordId(),
+          bookHistory.getUserName(),
+          bookHistory.getBookName(),
+          bookHistory.getLoanDate(),
+          bookHistory.getDueDate(),
+          bookHistory.getReturnDate()));
     }
 
     loanRecordBookHistoryBoundary.complete(new LoanRecordBookHistoryOutputData(outputItemList));

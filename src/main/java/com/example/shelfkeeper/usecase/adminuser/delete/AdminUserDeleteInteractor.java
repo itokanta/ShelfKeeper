@@ -11,7 +11,7 @@ import com.example.shelfkeeper.usecase.port.AdminUserRepository;
  * @author itokanta
  */
 @Service
-public class AdminUserDeleteInteractor implements AdminUserDeleteUseCase{
+public class AdminUserDeleteInteractor implements AdminUserDeleteUseCase {
   /** 管理者ユーザーの永続化を担うリポジトリ。 */
   private final AdminUserRepository adminUserRepository;
 

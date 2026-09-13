@@ -39,13 +39,13 @@ public class JwtService {
     Date expire = new Date(now.getTime() + expirationMs);
 
     return JWT.create()
-      .withIssuer("shelfkeeper")
-      .withSubject(loginUser.getUsername())
-      .withClaim("adminId", loginUser.getAdminUser().getId())
-      .withClaim("name", loginUser.getAdminUser().getName())
-      .withIssuedAt(now)
-      .withExpiresAt(expire)
-      .sign(algorithm);
+        .withIssuer("shelfkeeper")
+        .withSubject(loginUser.getUsername())
+        .withClaim("adminId", loginUser.getAdminUser().getId())
+        .withClaim("name", loginUser.getAdminUser().getName())
+        .withIssuedAt(now)
+        .withExpiresAt(expire)
+        .sign(algorithm);
   }
 
   /**
