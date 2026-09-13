@@ -36,13 +36,13 @@ public class LoanRecordCheckInInteractor implements LoanRecordCheckInUseCase{
     Optional<LoanRecord> findByIdResult = loanRecordRepository.findById(loanRecordCheckInInputData.getId());
     
     if(findByIdResult.isEmpty()) {
-      throw new BadRequestException("指定された書籍には貸出記録がありません");
+      throw new BadRequestException("指定された貸出記録は存在しません");
     }
 
     LoanRecord checkInTarget = findByIdResult.get();
 
     if(checkInTarget.getReturnDate() != null) {
-      throw new BadRequestException("指定された書籍はすでに返却済みです");
+      throw new BadRequestException("指定された貸出記録はすでに返却済みです");
     }
 
     loanRecordRepository.checkIn(new LoanRecord(checkInTarget.getId(), checkInTarget.getUserId(), checkInTarget.getBookId(), checkInTarget.getLoanDate(), checkInTarget.getDueDate(), LocalDate.now()));
