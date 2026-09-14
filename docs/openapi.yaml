@@ -1,0 +1,917 @@
+openapi: 3.0.3
+info:
+  title: Shelfkeeper API
+  version: 0.0.1
+  description: |
+    図書館向けの蔵書・利用者・貸出管理 API。
+
+    管理者は `POST /login` で JWT を取得し、以降のリクエストに
+    `Authorization: Bearer <token>` を付与する。`POST /login` 以外は認証必須。
+  contact:
+    name: itokanta
+
+servers:
+  - url: http://localhost:8080
+    description: ローカル開発環境
+
+tags:
+  - name: Auth
+    description: 管理者のログイン
+  - name: AdminUsers
+    description: 管理者ユーザー
+  - name: Books
+    description: 蔵書
+  - name: Users
+    description: 図書館の利用者
+  - name: LoanRecords
+    description: 貸出・返却
+
+security:
+  - bearerAuth: []
+
+paths:
+  /login:
+    post:
+      tags: [Auth]
+      operationId: login
+      summary: 管理者としてログインする
+      description: |
+        メールアドレスとパスワードを検証し、JWT を発行する。
+        トークンの有効期限は 1 時間。このエンドポイントのみ認証不要。
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+            example:
+              mail: admin@example.com
+              pass: secret
+      responses:
+        "200":
+          description: ログイン成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+              example:
+                token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        "401":
+          description: メールアドレスまたはパスワードが正しくない
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+              example:
+                message: メールアドレスまたはパスワードが正しくありません
+
+  /adminusers:
+    post:
+      tags: [AdminUsers]
+      operationId: createAdminUser
+      summary: 管理者ユーザーを作成する
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminUserCreateRequest"
+            example:
+              name: 山田太郎
+              mail: taro@example.com
+              pass: secret
+      responses:
+        "201":
+          description: 作成成功。レスポンスボディなし
+        "400":
+          description: |
+            バリデーションエラー、またはメールアドレスが既に登録済み。
+            重複時の `message` は「入力されたメールアドレスはすでに登録されています」。
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                validation:
+                  summary: バリデーションエラー
+                  value:
+                    status: 400
+                    message: バリデーションエラー
+                    details:
+                      name: 名前は必須です
+                      mail: メールアドレスとして不正な形式です
+                      pass: パスワードは必須です
+                duplicateMail:
+                  summary: メールアドレス重複
+                  value:
+                    status: 400
+                    message: 入力されたメールアドレスはすでに登録されています
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      tags: [AdminUsers]
+      operationId: updateCurrentAdminUser
+      summary: ログイン中の管理者ユーザーを更新する
+      description: 送信した項目だけを更新する。省略した項目は既存値を維持する。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminUserUpdateRequest"
+            example:
+              name: 山田花子
+              mail: hanako@example.com
+      responses:
+        "204":
+          description: 更新成功。レスポンスボディなし
+        "400":
+          description: メールアドレスの形式が不正
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                status: 400
+                message: バリデーションエラー
+                details:
+                  mail: メールアドレスとして不正な形式です
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    delete:
+      tags: [AdminUsers]
+      operationId: deleteCurrentAdminUser
+      summary: ログイン中の管理者ユーザーを削除する
+      description: |
+        成功時は 204。クライアントは保持している JWT を破棄し、以降のリクエストに付けない。
+        サーバはトークンを無効化しない。破棄前の JWT は最大 1 時間有効な場合がある。
+      responses:
+        "204":
+          description: 削除成功。レスポンスボディなし。クライアントは JWT を破棄すること。
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /adminusers/me:
+    get:
+      tags: [AdminUsers]
+      operationId: getCurrentAdminUser
+      summary: ログイン中の管理者ユーザーを取得する
+      responses:
+        "200":
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUserFindSingleResponse"
+              example:
+                name: 山田太郎
+                mail: taro@example.com
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /books:
+    get:
+      tags: [Books]
+      operationId: listBooks
+      summary: 蔵書一覧を取得する
+      responses:
+        "200":
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookListResponse"
+              example:
+                bookList:
+                  - bookId: 1
+                    title: こころ
+                    authorName: 夏目漱石
+                    status: 貸出可能
+                  - bookId: 2
+                    title: 羅生門
+                    authorName: 芥川龍之介
+                    status: 貸出不可
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      tags: [Books]
+      operationId: createBook
+      summary: 蔵書を登録する
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookCreateRequest"
+            example:
+              title: こころ
+              authorName: 夏目漱石
+      responses:
+        "201":
+          description: 作成成功。レスポンスボディなし
+        "400":
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                status: 400
+                message: バリデーションエラー
+                details:
+                  title: タイトルは必須です
+                  authorName: 作者は必須です
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /books/search:
+    get:
+      tags: [Books]
+      operationId: searchBooks
+      summary: タイトルで蔵書を検索する
+      parameters:
+        - name: title
+          in: query
+          required: true
+          description: 検索するタイトル
+          schema:
+            type: string
+            minLength: 1
+          example: こころ
+      responses:
+        "200":
+          description: 検索成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookSearchResponse"
+              example:
+                searchBookList:
+                  - bookId: 1
+                    title: こころ
+                    authorName: 夏目漱石
+                    status: 貸出可能
+        "400":
+          description: 検索語が未指定
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                status: 400
+                message: バリデーションエラー
+                details:
+                  title: 値は必須です
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /books/{id}:
+    delete:
+      tags: [Books]
+      operationId: deleteBook
+      summary: 蔵書を削除する
+      parameters:
+        - $ref: "#/components/parameters/BookIdPath"
+      responses:
+        "204":
+          description: 削除成功。レスポンスボディなし
+        "400":
+          description: |
+            パスパラメータ不正、または指定書籍が未登録。
+            未登録時の `message` は「指定された書籍は登録されていません」。
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                validation:
+                  summary: ID が 1 未満
+                  value:
+                    status: 400
+                    message: バリデーションエラー
+                    details:
+                      id: 書籍IDは1以上で指定してください
+                notFound:
+                  summary: 書籍が存在しない
+                  value:
+                    status: 400
+                    message: 指定された書籍は登録されていません
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /users:
+    get:
+      tags: [Users]
+      operationId: listUsers
+      summary: 利用者一覧を取得する
+      responses:
+        "200":
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserListResponse"
+              example:
+                userList:
+                  - id: 1
+                    name: 佐藤花子
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      tags: [Users]
+      operationId: createUser
+      summary: 利用者を登録する
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreateRequest"
+            example:
+              name: 佐藤花子
+      responses:
+        "201":
+          description: 作成成功。レスポンスボディなし
+        "400":
+          description: バリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                status: 400
+                message: バリデーションエラー
+                details:
+                  name: 名前は必須です
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /users/overduelist:
+    get:
+      tags: [Users]
+      operationId: listOverdueUsers
+      summary: 延滞利用者一覧を取得する
+      description: 返却期限を過ぎた未返却貸出がある利用者と、その延滞書籍を返す。
+      responses:
+        "200":
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserOverDueListResponse"
+              example:
+                userOverDueList:
+                  - userId: 1
+                    userName: 佐藤花子
+                    dueBookList:
+                      - bookId: 2
+                        bookTitle: 羅生門
+                        loanDate: "2026-08-01"
+                        dueDate: "2026-08-15"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /users/{id}:
+    delete:
+      tags: [Users]
+      operationId: deleteUser
+      summary: 利用者を削除する
+      parameters:
+        - $ref: "#/components/parameters/UserIdPath"
+      responses:
+        "204":
+          description: 削除成功。レスポンスボディなし
+        "400":
+          description: |
+            パスパラメータ不正、または指定利用者が未登録。
+            未登録時の `message` は「指定されたユーザーは存在しません」。
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                validation:
+                  summary: ID が 1 未満
+                  value:
+                    status: 400
+                    message: バリデーションエラー
+                    details:
+                      id: ユーザーIDは1以上を指定してください
+                notFound:
+                  summary: 利用者が存在しない
+                  value:
+                    status: 400
+                    message: 指定されたユーザーは存在しません
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /loanrecords:
+    post:
+      tags: [LoanRecords]
+      operationId: checkOutBook
+      summary: 書籍を貸し出す
+      description: 貸出日は当日、返却期限は貸出期間後の日付で記録する。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoanRecordCheckOutRequest"
+            example:
+              userId: 1
+              bookId: 2
+      responses:
+        "201":
+          description: 貸出登録成功。レスポンスボディなし
+        "400":
+          description: |
+            バリデーションエラー、または業務エラー。
+            業務エラーの `message` は次のいずれか。
+            - 該当の書籍はすでに貸出中です
+            - 指定されたユーザーは登録されていません
+            - 指定された書籍は登録されていません
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                validation:
+                  summary: バリデーションエラー
+                  value:
+                    status: 400
+                    message: バリデーションエラー
+                    details:
+                      userId: ユーザーIDは必須です
+                      bookId: 書籍IDは必須です
+                alreadyLoaned:
+                  summary: すでに貸出中
+                  value:
+                    status: 400
+                    message: 該当の書籍はすでに貸出中です
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /loanrecords/bookhistory:
+    get:
+      tags: [LoanRecords]
+      operationId: getBookLoanHistory
+      summary: 書籍の貸出履歴を取得する
+      parameters:
+        - name: bookId
+          in: query
+          required: true
+          description: 履歴を取得する書籍の識別子
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+          example: 1
+      responses:
+        "200":
+          description: 取得成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoanRecordBookHistoryResponse"
+              example:
+                loanRecordBookHistoryList:
+                  - loanRecordId: 10
+                    userName: 佐藤花子
+                    bookName: こころ
+                    loanDate: "2026-08-01"
+                    dueDate: "2026-08-15"
+                    returnDate: "2026-08-10"
+                  - loanRecordId: 11
+                    userName: 鈴木一郎
+                    bookName: こころ
+                    loanDate: "2026-09-01"
+                    dueDate: "2026-09-15"
+                    returnDate: null
+        "400":
+          description: bookId が未指定、または 1 未満
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                status: 400
+                message: バリデーションエラー
+                details:
+                  bookId: 書籍IDは必須です
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /loanrecords/{id}:
+    put:
+      tags: [LoanRecords]
+      operationId: checkInBook
+      summary: 貸出を返却する
+      parameters:
+        - $ref: "#/components/parameters/LoanRecordIdPath"
+      responses:
+        "204":
+          description: 返却成功。レスポンスボディなし
+        "400":
+          description: |
+            パスパラメータ不正、または業務エラー。
+            業務エラーの `message` は次のいずれか。
+            - 指定された貸出記録は存在しません
+            - 指定された貸出記録はすでに返却済みです
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                validation:
+                  summary: ID が 1 未満
+                  value:
+                    status: 400
+                    message: バリデーションエラー
+                    details:
+                      id: 貸出記録IDは1以上で指定してください
+                alreadyReturned:
+                  summary: すでに返却済み
+                  value:
+                    status: 400
+                    message: 指定された貸出記録はすでに返却済みです
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "POST /login で取得した JWT を Authorization ヘッダーの Bearer トークンとして送る。"
+
+  parameters:
+    BookIdPath:
+      name: id
+      in: path
+      required: true
+      description: 書籍の識別子
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+    UserIdPath:
+      name: id
+      in: path
+      required: true
+      description: 利用者の識別子
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+    LoanRecordIdPath:
+      name: id
+      in: path
+      required: true
+      description: 貸出記録の識別子
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+
+  responses:
+    Unauthorized:
+      description: |
+        未認証、またはトークンが無効。
+        トークン未送信時はボディなし。無効トークン時は `{"message":"トークンが無効です"}`。
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/AuthErrorResponse"
+          example:
+            message: トークンが無効です
+    InternalServerError:
+      description: 想定外のサーバーエラー
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            status: 500
+            message: サーバーエラーが発生しました
+
+  schemas:
+    LoginRequest:
+      type: object
+      required: [mail, pass]
+      properties:
+        mail:
+          type: string
+          format: email
+          description: 管理者のメールアドレス
+        pass:
+          type: string
+          format: password
+          description: パスワード
+
+    LoginResponse:
+      type: object
+      required: [token]
+      properties:
+        token:
+          type: string
+          description: JWT。以降のリクエストの Authorization ヘッダーに使う。
+
+    AuthErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+
+    ErrorResponse:
+      type: object
+      required: [status, message]
+      properties:
+        status:
+          type: integer
+          format: int32
+          description: HTTP ステータスコード
+        message:
+          type: string
+          description: エラー概要
+        details:
+          type: object
+          additionalProperties:
+            type: string
+          description: 項目ごとのバリデーションメッセージ。業務エラーでは省略される。
+          nullable: true
+
+    AdminUserCreateRequest:
+      type: object
+      required: [name, mail, pass]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: 管理者の名前
+        mail:
+          type: string
+          format: email
+          description: メールアドレス
+        pass:
+          type: string
+          format: password
+          minLength: 1
+          description: パスワード
+
+    AdminUserUpdateRequest:
+      type: object
+      description: 更新する項目だけを送る。未送信の項目は変更しない。
+      properties:
+        name:
+          type: string
+          description: 管理者の名前
+        mail:
+          type: string
+          format: email
+          description: メールアドレス
+        pass:
+          type: string
+          format: password
+          description: 新しいパスワード
+
+    AdminUserFindSingleResponse:
+      type: object
+      required: [name, mail]
+      properties:
+        name:
+          type: string
+          description: 管理者の名前
+        mail:
+          type: string
+          format: email
+          description: メールアドレス
+
+    BookCreateRequest:
+      type: object
+      required: [title, authorName]
+      properties:
+        title:
+          type: string
+          minLength: 1
+          description: タイトル
+        authorName:
+          type: string
+          minLength: 1
+          description: 著者名
+
+    BookListResponse:
+      type: object
+      required: [bookList]
+      properties:
+        bookList:
+          type: array
+          items:
+            $ref: "#/components/schemas/BookListItem"
+
+    BookListItem:
+      type: object
+      required: [bookId, title, authorName, status]
+      properties:
+        bookId:
+          type: integer
+          format: int32
+          description: 書籍の識別子
+        title:
+          type: string
+          description: タイトル
+        authorName:
+          type: string
+          description: 著者名
+        status:
+          $ref: "#/components/schemas/BookLoanStatus"
+
+    BookSearchResponse:
+      type: object
+      required: [searchBookList]
+      properties:
+        searchBookList:
+          type: array
+          items:
+            $ref: "#/components/schemas/BookSearchItem"
+
+    BookSearchItem:
+      type: object
+      required: [bookId, title, authorName, status]
+      properties:
+        bookId:
+          type: integer
+          format: int32
+          description: 書籍の識別子
+        title:
+          type: string
+          description: タイトル
+        authorName:
+          type: string
+          description: 著者名
+        status:
+          $ref: "#/components/schemas/BookLoanStatus"
+
+    BookLoanStatus:
+      type: string
+      description: 貸出状態の表示文言
+      enum: [貸出可能, 貸出不可]
+
+    UserCreateRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: 利用者名
+
+    UserListResponse:
+      type: object
+      required: [userList]
+      properties:
+        userList:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserListItem"
+
+    UserListItem:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: 利用者の識別子
+        name:
+          type: string
+          description: 利用者名
+
+    UserOverDueListResponse:
+      type: object
+      required: [userOverDueList]
+      properties:
+        userOverDueList:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserOverDueListItem"
+
+    UserOverDueListItem:
+      type: object
+      required: [userId, userName, dueBookList]
+      properties:
+        userId:
+          type: integer
+          format: int32
+          description: 利用者の識別子
+        userName:
+          type: string
+          description: 利用者名
+        dueBookList:
+          type: array
+          description: 延滞中の書籍一覧
+          items:
+            $ref: "#/components/schemas/DueBookListItem"
+
+    DueBookListItem:
+      type: object
+      required: [bookId, bookTitle, loanDate, dueDate]
+      properties:
+        bookId:
+          type: integer
+          format: int32
+          description: 書籍の識別子
+        bookTitle:
+          type: string
+          description: 書籍のタイトル
+        loanDate:
+          type: string
+          format: date
+          description: 貸出日
+        dueDate:
+          type: string
+          format: date
+          description: 返却期限日
+
+    LoanRecordCheckOutRequest:
+      type: object
+      required: [userId, bookId]
+      properties:
+        userId:
+          type: integer
+          format: int32
+          minimum: 1
+          description: 貸出利用者の識別子
+        bookId:
+          type: integer
+          format: int32
+          minimum: 1
+          description: 貸出書籍の識別子
+
+    LoanRecordBookHistoryResponse:
+      type: object
+      required: [loanRecordBookHistoryList]
+      properties:
+        loanRecordBookHistoryList:
+          type: array
+          items:
+            $ref: "#/components/schemas/LoanRecordBookHistoryItem"
+
+    LoanRecordBookHistoryItem:
+      type: object
+      required: [loanRecordId, userName, bookName, loanDate, dueDate]
+      properties:
+        loanRecordId:
+          type: integer
+          format: int32
+          description: 貸出記録の識別子
+        userName:
+          type: string
+          description: 利用者名
+        bookName:
+          type: string
+          description: 書籍名
+        loanDate:
+          type: string
+          format: date
+          description: 貸出日
+        dueDate:
+          type: string
+          format: date
+          description: 返却期限日
+        returnDate:
+          type: string
+          format: date
+          nullable: true
+          description: 返却日。未返却の場合は null
