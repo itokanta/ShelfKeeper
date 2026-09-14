@@ -395,6 +395,49 @@ paths:
           $ref: "#/components/responses/InternalServerError"
 
   /users/{id}:
+    put:
+      tags: [Users]
+      operationId: updateUser
+      summary: 利用者を更新する
+      description: 送信した項目だけを更新する。省略した項目は既存値を維持する。
+      parameters:
+        - $ref: "#/components/parameters/UserIdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdateRequest"
+            example:
+              name: 佐藤花子
+      responses:
+        "204":
+          description: 更新成功。レスポンスボディなし
+        "400":
+          description: |
+            パスパラメータ不正、または指定利用者が未登録。
+            未登録時の `message` は「指定されたユーザーは存在しません」。
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                validation:
+                  summary: ID が 1 未満
+                  value:
+                    status: 400
+                    message: バリデーションエラー
+                    details:
+                      id: ユーザーIDは1以上を指定してください
+                notFound:
+                  summary: 利用者が存在しない
+                  value:
+                    status: 400
+                    message: 指定されたユーザーは存在しません
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
     delete:
       tags: [Users]
       operationId: deleteUser
@@ -795,6 +838,14 @@ components:
         name:
           type: string
           minLength: 1
+          description: 利用者名
+
+    UserUpdateRequest:
+      type: object
+      description: 更新する項目だけを送る。未送信の項目は変更しない。
+      properties:
+        name:
+          type: string
           description: 利用者名
 
     UserListResponse:

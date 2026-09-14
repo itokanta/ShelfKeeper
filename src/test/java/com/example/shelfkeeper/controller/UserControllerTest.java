@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -37,6 +38,8 @@ import com.example.shelfkeeper.usecase.user.delete.UserDeleteInputData;
 import com.example.shelfkeeper.usecase.user.delete.UserDeleteUseCase;
 import com.example.shelfkeeper.usecase.user.list.UserListUseCase;
 import com.example.shelfkeeper.usecase.user.overduelist.UserOverDueListUseCase;
+import com.example.shelfkeeper.usecase.user.update.UserUpdateInputData;
+import com.example.shelfkeeper.usecase.user.update.UserUpdateUseCase;
 
 /**
  * {@link UserController} のテストクラス。
@@ -53,6 +56,9 @@ public class UserControllerTest {
 
   @MockitoBean
   private UserDeleteUseCase userDeleteUseCase;
+
+  @MockitoBean
+  private UserUpdateUseCase userUpdateUseCase;
 
   @MockitoBean
   private UserListUseCase userListUseCase;
@@ -123,6 +129,36 @@ public class UserControllerTest {
         .andExpect(status().isBadRequest());
 
     verify(userDeleteUseCase, never()).handle(any());
+  }
+
+  /**
+   * 利用者の更新に成功することを検証する。
+   */
+  @Test
+  void updateSuccess() throws Exception {
+    mockMvc.perform(put("/users/1")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"name\":\"test2\"}"))
+        .andExpect(status().isNoContent());
+
+    ArgumentCaptor<UserUpdateInputData> captor = ArgumentCaptor.forClass(UserUpdateInputData.class);
+    verify(userUpdateUseCase).handle(captor.capture());
+
+    assertEquals(1, captor.getValue().getId());
+    assertEquals("test2", captor.getValue().getName());
+  }
+
+  /**
+   * ユーザーIDのバリデーションエラーの場合、更新ユースケースを呼び出さないことを検証する。
+   */
+  @Test
+  void updateValidationError() throws Exception {
+    mockMvc.perform(put("/users/0")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"name\":\"test2\"}"))
+        .andExpect(status().isBadRequest());
+
+    verify(userUpdateUseCase, never()).handle(any());
   }
 
   /**
