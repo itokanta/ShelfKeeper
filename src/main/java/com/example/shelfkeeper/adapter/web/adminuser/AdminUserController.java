@@ -1,0 +1,108 @@
+package com.example.shelfkeeper.adapter.web.adminuser;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.shelfkeeper.adapter.web.adminuser.create.AdminUserCreateRequest;
+import com.example.shelfkeeper.adapter.web.adminuser.findsingle.AdminUserFindSinglePresenter;
+import com.example.shelfkeeper.adapter.web.adminuser.findsingle.AdminUserFindSingleResponse;
+import com.example.shelfkeeper.adapter.web.adminuser.update.AdminUserUpdateRequest;
+import com.example.shelfkeeper.security.LoginUser;
+import com.example.shelfkeeper.usecase.adminuser.create.AdminUserCreateUseCase;
+import com.example.shelfkeeper.usecase.adminuser.delete.AdminUserDeleteInputData;
+import com.example.shelfkeeper.usecase.adminuser.delete.AdminUserDeleteUseCase;
+import com.example.shelfkeeper.usecase.adminuser.findsingle.AdminUserFindSingleInputData;
+import com.example.shelfkeeper.usecase.adminuser.findsingle.AdminUserFindSingleUseCase;
+import com.example.shelfkeeper.usecase.adminuser.update.AdminUserUpdateUseCase;
+
+import jakarta.validation.Valid;
+
+/**
+ * 管理者ユーザーに関する API を提供するコントローラー。
+ *
+ * @author itokanta
+ */
+@RestController
+@RequestMapping("adminusers")
+@CrossOrigin(origins = "http://localhost:8080", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
+public class AdminUserController {
+  /** 管理者ユーザー作成ユースケース。 */
+  private final AdminUserCreateUseCase adminUserCreateUseCase;
+  /** 管理者ユーザー削除ユースケース。 */
+  private final AdminUserDeleteUseCase adminUserDeleteUseCase;
+  /** 管理者ユーザー1件取得ユースケース。 */
+  private final AdminUserFindSingleUseCase adminUserFindSingleUseCase;
+  /** 管理者ユーザー1件取得のプレゼンター。 */
+  private final AdminUserFindSinglePresenter adminUserFindSinglePresenter;
+  /** 管理者ユーザー更新ユースケース。 */
+  private final AdminUserUpdateUseCase adminUserUpdateUseCase;
+
+  public AdminUserController(AdminUserCreateUseCase adminUserCreateUseCase,
+      AdminUserDeleteUseCase adminUserDeleteUseCase, AdminUserFindSingleUseCase adminUserFindSingleUseCase,
+      AdminUserFindSinglePresenter adminUserFindSinglePresenter, AdminUserUpdateUseCase adminUserUpdateUseCase) {
+    this.adminUserCreateUseCase = adminUserCreateUseCase;
+    this.adminUserDeleteUseCase = adminUserDeleteUseCase;
+    this.adminUserFindSingleUseCase = adminUserFindSingleUseCase;
+    this.adminUserFindSinglePresenter = adminUserFindSinglePresenter;
+    this.adminUserUpdateUseCase = adminUserUpdateUseCase;
+  }
+
+  /**
+   * 管理者ユーザーを作成する。
+   *
+   * @param request 作成リクエスト
+   * @return 作成成功時は 201 Created
+   */
+  @PostMapping("")
+  public ResponseEntity<Void> create(@RequestBody @Valid AdminUserCreateRequest request) {
+    adminUserCreateUseCase.handle(request.toInputData());
+    return ResponseEntity.status(HttpStatus.CREATED).build();
+  }
+
+  /**
+   * ログイン中の管理者ユーザーを削除する。
+   *
+   * @param loginUser 認証済みの管理者ユーザー
+   * @return 削除成功時は 204 No Content
+   */
+  @DeleteMapping("")
+  public ResponseEntity<Void> delete(@AuthenticationPrincipal LoginUser loginUser) {
+    adminUserDeleteUseCase.handle(new AdminUserDeleteInputData(loginUser.getAdminUser().getId()));
+    return ResponseEntity.noContent().build();
+  }
+
+  /**
+   * ログイン中の管理者ユーザーを1件取得する。
+   *
+   * @param loginUser 認証済みの管理者ユーザー
+   * @return 取得した管理者ユーザー情報
+   */
+  @GetMapping("/me")
+  public ResponseEntity<AdminUserFindSingleResponse> findSingle(@AuthenticationPrincipal LoginUser loginUser) {
+    adminUserFindSingleUseCase.handle(new AdminUserFindSingleInputData(loginUser.getAdminUser().getId()));
+    return ResponseEntity.ok(adminUserFindSinglePresenter.getResponse());
+  }
+
+  /**
+   * ログイン中の管理者ユーザーを更新する。
+   *
+   * @param loginUser 認証済みの管理者ユーザー
+   * @param request 更新リクエスト
+   * @return 更新成功時は 204 No Content
+   */
+  @PutMapping("")
+  public ResponseEntity<Void> update(@AuthenticationPrincipal LoginUser loginUser, @RequestBody @Valid AdminUserUpdateRequest request) {
+    adminUserUpdateUseCase.handle(request.toInputData(loginUser.getAdminUser().getId()));
+    return ResponseEntity.noContent().build();
+  }
+}
